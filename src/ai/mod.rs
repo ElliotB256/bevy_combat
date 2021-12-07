@@ -5,6 +5,7 @@ use crate::constants::FIXED_TIME_STEP;
 
 pub mod movement;
 pub mod idle;
+pub mod aggression;
 
 #[derive(Default)]
 pub struct AIPlugin;
