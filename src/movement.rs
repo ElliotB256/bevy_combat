@@ -1,20 +1,22 @@
 use bevy::{core::FixedTimestep, prelude::*};
+use crate::constants::FIXED_TIME_STEP;
 
-const TIME_STEP: f32 = 1.0 / 60.0;
-
-struct Velocity(Vec3);
-struct Speed(f32);
-struct TurnSpeed {
+pub struct Velocity(Vec3);
+pub struct Speed(f32);
+pub struct TurnSpeed {
     pub radians_per_second: f32,
 }
-struct Mass(f32);
-struct Thrust(f32);
-struct MaxSpeed(f32);
+pub struct MaxTurnSpeed {
+    pub radians_per_second: f32,
+}
+pub struct Mass(f32);
+pub struct Thrust(f32);
+pub struct MaxSpeed(f32);
 
-/// Direction the entity is facing.
-// struct Heading {
-//     pub radians: f32,
-// }
+/// Direction the entity is facing. Readonly.
+pub struct Heading {
+     pub radians: f32,
+}
 
 fn update_velocity(mut query: Query<(&Speed, &Transform, &mut Velocity)>) {
     for (speed, transform, mut velocity) in query.iter_mut() {
@@ -24,13 +26,13 @@ fn update_velocity(mut query: Query<(&Speed, &Transform, &mut Velocity)>) {
 
 fn update_translation(mut query: Query<(&Velocity, &mut Transform)>) {
     for (vel, mut trans) in query.iter_mut() {
-        trans.translation = trans.translation + vel.0 * TIME_STEP;
+        trans.translation = trans.translation + vel.0 * FIXED_TIME_STEP;
     }
 }
 
 fn update_rotation(mut query: Query<(&TurnSpeed, &mut Transform)>) {
     for (rps, mut trans) in query.iter_mut() {
-        trans.rotation = trans.rotation * (Quat::from_rotation_z(rps.radians_per_second * TIME_STEP));
+        trans.rotation = trans.rotation * (Quat::from_rotation_z(rps.radians_per_second * FIXED_TIME_STEP));
     }
 }
 
@@ -70,7 +72,7 @@ impl Plugin for MovementPlugin {
             CoreStage::Update,
             calculate_max_speed
                 .system()
-                .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
+                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .label(MovementSystems::CalculateMaxSpeed),
         )
         .add_startup_system_to_stage(
@@ -78,15 +80,7 @@ impl Plugin for MovementPlugin {
             calculate_speed
                 .system()
                 .label(MovementSystems::CalculateSpeed)
-                .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
-                .after(MovementSystems::CalculateMaxSpeed),
-        )
-        .add_startup_system_to_stage(
-            CoreStage::Update,
-            calculate_speed
-                .system()
-                .label(MovementSystems::CalculateSpeed)
-                .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
+                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .after(MovementSystems::CalculateMaxSpeed),
         )
         .add_startup_system_to_stage(
@@ -94,7 +88,7 @@ impl Plugin for MovementPlugin {
             update_rotation
                 .system()
                 .label(MovementSystems::UpdateRotation)
-                .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
+                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .after(MovementSystems::CalculateSpeed),
         )
         .add_startup_system_to_stage(
@@ -102,14 +96,14 @@ impl Plugin for MovementPlugin {
             update_velocity
                 .system()
                 .label(MovementSystems::UpdateVelocity)
-                .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
+                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .after(MovementSystems::UpdateRotation),
         )
         .add_startup_system_to_stage(
             CoreStage::Update,
             update_translation
                 .system()
-                .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
+                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .after(MovementSystems::UpdateVelocity),
         );
     }
