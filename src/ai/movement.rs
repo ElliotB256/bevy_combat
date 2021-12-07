@@ -1,6 +1,6 @@
 //! Implements AI for moving and steering entities.
 
-use super::IdleBehavior;
+use crate::ai::idle::IdleBehavior;
 use crate::combat::Target;
 use crate::constants::FIXED_TIME_STEP;
 use crate::math_util::*;

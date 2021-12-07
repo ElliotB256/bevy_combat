@@ -6,7 +6,7 @@ use bevy::{
 
 use rand::Rng;
 use bevy_combat::movement::*;
-use bevy_combat::ai::{AIPlugin, movement::TurnToDestinationBehavior, IdleBehavior};
+use bevy_combat::ai::{AIPlugin, movement::TurnToDestinationBehavior, idle::IdleBehavior};
 
 pub struct PrintTimer(Timer);
 pub struct Position(Transform);
@@ -80,7 +80,8 @@ fn setup(
                 }
             )
             .insert(IdleBehavior)
-            .insert(TurnToDestinationBehavior { destination: Vec3::default() });
+            .insert(TurnToDestinationBehavior { destination: Vec3::default() })
+            .insert(bevy_combat::ai::idle::RoamBehavior { centre: Vec3::default(), radius: 300.0 });
         }
     }
 }

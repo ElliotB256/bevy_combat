@@ -4,8 +4,7 @@ use bevy::{core::FixedTimestep, prelude::*};
 use crate::constants::FIXED_TIME_STEP;
 
 pub mod movement;
-
-pub struct IdleBehavior;
+pub mod idle;
 
 #[derive(Default)]
 pub struct AIPlugin;
@@ -14,7 +13,8 @@ pub struct AIPlugin;
 pub enum AISystems {
     PeelManoeuvre,
     Pursue,
-    TurnToDestination
+    TurnToDestination,
+    DoRoaming
 }
 
 impl Plugin for AIPlugin {
@@ -41,6 +41,14 @@ impl Plugin for AIPlugin {
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .label(AISystems::TurnToDestination)
                 .after(crate::movement::MovementSystems::UpdateHeading)
-        );
+        )
+        .add_system_to_stage(
+            CoreStage::Update,
+            idle::do_roaming
+                .system()
+                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
+                .label(AISystems::DoRoaming)
+        )
+        ;
     }
 }
