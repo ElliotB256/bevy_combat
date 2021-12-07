@@ -1,5 +1,6 @@
 use bevy::{core::FixedTimestep, prelude::*};
 use crate::constants::FIXED_TIME_STEP;
+use crate::math_util::get_heading_to_point;
 
 pub struct Velocity(Vec3);
 pub struct Speed(f32);
@@ -48,12 +49,19 @@ fn calculate_speed(mut query: Query<(&MaxSpeed, &mut Speed)>) {
     }
 }
 
+fn update_heading(mut query: Query<(&GlobalTransform, &mut Heading)>) {
+    for (transform, mut heading) in query.iter_mut() {
+        heading.radians = get_heading_to_point(transform.local_x());
+    }
+}
+
 #[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
 pub enum MovementSystems {
     CalculateSpeed,
     CalculateMaxSpeed,
     UpdateRotation,
     UpdateVelocity,
+    UpdateHeading
 }
 
 #[derive(Default)]
@@ -68,14 +76,14 @@ impl Plugin for MovementPlugin {
         // .register_type::<Thrust>()
         // .register_type::<MaxSpeed>();
 
-        app.add_startup_system_to_stage(
+        app.add_system_to_stage(
             CoreStage::Update,
             calculate_max_speed
                 .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .label(MovementSystems::CalculateMaxSpeed),
         )
-        .add_startup_system_to_stage(
+        .add_system_to_stage(
             CoreStage::Update,
             calculate_speed
                 .system()
@@ -83,7 +91,7 @@ impl Plugin for MovementPlugin {
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .after(MovementSystems::CalculateMaxSpeed),
         )
-        .add_startup_system_to_stage(
+        .add_system_to_stage(
             CoreStage::Update,
             update_rotation
                 .system()
@@ -91,7 +99,7 @@ impl Plugin for MovementPlugin {
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .after(MovementSystems::CalculateSpeed),
         )
-        .add_startup_system_to_stage(
+        .add_system_to_stage(
             CoreStage::Update,
             update_velocity
                 .system()
@@ -99,12 +107,19 @@ impl Plugin for MovementPlugin {
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .after(MovementSystems::UpdateRotation),
         )
-        .add_startup_system_to_stage(
+        .add_system_to_stage(
             CoreStage::Update,
             update_translation
                 .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .after(MovementSystems::UpdateVelocity),
+        )
+        .add_system_to_stage(
+            CoreStage::Update,
+            update_heading
+                .system()
+                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
+                .after(MovementSystems::UpdateHeading),
         );
     }
 }

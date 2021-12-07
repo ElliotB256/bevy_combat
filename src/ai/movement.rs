@@ -8,6 +8,7 @@ use crate::movement::{Heading, MaxTurnSpeed, TurnSpeed};
 use bevy::prelude::*;
 
 /// Indicates that an entity should turn towards a destination.
+#[derive(Default)]
 pub struct TurnToDestinationBehavior {
     pub destination: Vec3,
 }
@@ -16,7 +17,7 @@ pub struct PursueBehavior;
 pub const PROXIMITY_RADIUS: f32 = 4.0;
 
 /// Turns entities with a [TurnToDestinationBehavior](TurnToDestinationBehavior.struct.html) towards their destination.
-fn turn_to_destination(
+pub fn turn_to_destination(
     mut query: Query<(
         &TurnToDestinationBehavior,
         &GlobalTransform,
@@ -40,7 +41,7 @@ fn turn_to_destination(
 }
 
 /// Entity pursues their target.
-fn pursue(
+pub fn pursue(
     mut commands: Commands,
     mut query: Query<(
         Entity,
@@ -79,3 +80,52 @@ fn pursue(
 /// 
 /// It is usually triggered when the entity gets too close.
 pub struct PeelManoeuvreBehavior;
+const ENGAGEMENT_RADIUS: f32 = 10.0;
+
+pub fn peel_manoeuvre(
+    mut commands: Commands,
+    mut query: Query<(
+        Entity,
+        &PeelManoeuvreBehavior,
+        &Target,
+        &GlobalTransform,
+        &Heading,
+        &MaxTurnSpeed,
+        &mut TurnSpeed,
+    )>,
+    pos_query: Query<&GlobalTransform>
+) {
+    for (entity, _peel, target, transform, heading, max_turn_speed, mut turn_speed) in query.iter_mut() {
+    let result = pos_query.get_component::<GlobalTransform>(target.0);
+        match result {
+            Err(_) => {
+                // target does not have position. Disengage.
+                commands.entity(entity).remove::<PeelManoeuvreBehavior>();
+                commands.entity(entity).insert(IdleBehavior);
+                commands.entity(entity).insert(TurnToDestinationBehavior::default());
+                continue;
+            }
+            Ok(target_transform) => {
+                // Turn away from the enemy.
+                let delta = target_transform.translation - transform.translation;
+                let angle_diff = get_angle_difference(get_heading_to_point(delta), heading.radians);
+
+                if angle_diff.abs() < 0.3 * std::f32::consts::PI {
+                    turn_speed.radians_per_second = -max_turn_speed.radians_per_second * angle_diff.signum();
+                }
+                else {
+                    turn_speed.radians_per_second = 0.0;
+                }
+                
+                // Remain in evasive manoeuvre until a certain distance to target is reached.               
+                if delta.length_squared() > ENGAGEMENT_RADIUS * ENGAGEMENT_RADIUS {
+                    commands
+                        .entity(entity)
+                        .remove::<PeelManoeuvreBehavior>();
+                    commands.entity(entity).insert(PursueBehavior);
+                    commands.entity(entity).insert(TurnToDestinationBehavior::default());
+                }
+            }
+        }
+    }
+}
