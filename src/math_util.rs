@@ -8,7 +8,7 @@ use bevy::prelude::*;
 /// 
 /// * `delta`: difference vector equal to `target - source`.
 pub fn get_heading_to_point(delta: Vec3) -> f32 {
-    return delta.x.atan2(delta.z);
+    return delta.y.atan2(delta.x);
 }
 
 /// Returns the smallest angle difference between two stated angles.

@@ -75,7 +75,7 @@ fn calculate_speed(mut query: Query<(&MaxSpeed, &mut Speed)>) {
 
 fn update_heading(mut query: Query<(&GlobalTransform, &mut Heading)>) {
     for (transform, mut heading) in query.iter_mut() {
-        heading.radians = get_heading_to_point(transform.local_x());
+        heading.radians = get_heading_to_point(transform.local_y());
     }
 }
 

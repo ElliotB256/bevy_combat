@@ -6,6 +6,7 @@ use bevy::{
 
 use rand::Rng;
 use bevy_combat::movement::*;
+use bevy_combat::ai::{AIPlugin, movement::TurnToDestinationBehavior, IdleBehavior};
 
 pub struct PrintTimer(Timer);
 pub struct Position(Transform);
@@ -15,6 +16,7 @@ fn main() {
         .add_plugin(LogDiagnosticsPlugin::default())
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
         .add_plugin(MovementPlugin)
+        .add_plugin(AIPlugin)
         .insert_resource(bevy::log::LogSettings {
             level: bevy::log::Level::DEBUG,
             ..Default::default()
@@ -73,10 +75,12 @@ fn setup(
                     turn_speed: TurnSpeed::default(),
                     max_turn_speed: MaxTurnSpeed::new(3.0),
                     mass: Mass(1.0),
-                    thrust: Thrust(20.0),
+                    thrust: Thrust(150.0),
                     heading: Heading::default()
                 }
-            );
+            )
+            .insert(IdleBehavior)
+            .insert(TurnToDestinationBehavior { destination: Vec3::default() });
         }
     }
 }
