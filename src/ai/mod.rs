@@ -15,7 +15,11 @@ pub enum AISystems {
     PeelManoeuvre,
     Pursue,
     TurnToDestination,
-    DoRoaming
+    DoRoaming,
+    UpdateAggressionSource,
+    DoRetargetting,
+    FindTargets,
+    IdleToCombat
 }
 
 impl Plugin for AIPlugin {
@@ -51,5 +55,36 @@ impl Plugin for AIPlugin {
                 .label(AISystems::DoRoaming)
         )
         ;
+
+        app.add_system_to_stage(
+            CoreStage::Update,
+            aggression::update_aggression_source
+                .system()
+                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
+                .label(AISystems::UpdateAggressionSource)
+        )
+        .add_system_to_stage(
+            CoreStage::Update,
+            aggression::do_retargetting
+                .system()
+                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
+                .label(AISystems::DoRetargetting)
+        )
+        .add_system_to_stage(
+            CoreStage::Update,
+            aggression::find_targets
+                .system()
+                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
+                .label(AISystems::FindTargets)
+                .after(AISystems::UpdateAggressionSource)
+        );
+
+        app.add_system_to_stage(
+            CoreStage::Update,
+            idle::idle_to_combat
+                .system()
+                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
+                .label(AISystems::IdleToCombat)
+        );
     }
 }

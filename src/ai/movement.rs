@@ -13,8 +13,9 @@ pub struct TurnToDestinationBehavior {
     pub destination: Vec3,
 }
 
+#[derive(Default)]
 pub struct PursueBehavior;
-pub const PROXIMITY_RADIUS: f32 = 4.0;
+pub const PROXIMITY_RADIUS: f32 = 16.0;
 
 /// Turns entities with a [TurnToDestinationBehavior](TurnToDestinationBehavior.struct.html) towards their destination.
 pub fn turn_to_destination(
@@ -53,7 +54,13 @@ pub fn pursue(
     pos_query: Query<&GlobalTransform>,
 ) {
     for (entity, _pursue, target, transform, mut turn_to) in query.iter_mut() {
-        let result = pos_query.get_component::<GlobalTransform>(target.0);
+        
+        if target.0.is_none()
+        {
+            continue;
+        }
+        
+        let result = pos_query.get_component::<GlobalTransform>(target.0.expect("target is none"));
         match result {
             Err(_) => {
                 // target does not have position. Go to idle state
@@ -80,7 +87,7 @@ pub fn pursue(
 /// 
 /// It is usually triggered when the entity gets too close.
 pub struct PeelManoeuvreBehavior;
-const ENGAGEMENT_RADIUS: f32 = 10.0;
+const ENGAGEMENT_RADIUS: f32 = 32.0;
 
 pub fn peel_manoeuvre(
     mut commands: Commands,
@@ -96,7 +103,13 @@ pub fn peel_manoeuvre(
     pos_query: Query<&GlobalTransform>
 ) {
     for (entity, _peel, target, transform, heading, max_turn_speed, mut turn_speed) in query.iter_mut() {
-    let result = pos_query.get_component::<GlobalTransform>(target.0);
+        
+        if target.0.is_none()
+        {
+            continue;
+        }
+        
+        let result = pos_query.get_component::<GlobalTransform>(target.0.expect("target is none"));
         match result {
             Err(_) => {
                 // target does not have position. Disengage.
