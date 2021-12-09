@@ -40,7 +40,7 @@ impl Plugin for AIPlugin {
                 .label(AISystems::Pursue)
         )
         .add_system_to_stage(
-            CoreStage::Update,
+            CoreStage::PostUpdate,
             movement::turn_to_destination
                 .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))

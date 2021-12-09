@@ -212,7 +212,7 @@ pub fn find_targets(
         }
 
         target.0 = targetter.current_target.0;
-        println!("Assigned target: {:?}", target.0);
+        //println!("Assigned target: {:?}", target.0);
     }    
 
     //println!("Number of bins: {:?}", sorted_targets.keys().len());

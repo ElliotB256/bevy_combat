@@ -17,8 +17,8 @@ fn main() {
     App::build()
         .add_plugin(LogDiagnosticsPlugin::default())
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
-        .add_plugin(MovementPlugin)
         .add_plugin(AIPlugin)
+        .add_plugin(MovementPlugin)
         .insert_resource(bevy::log::LogSettings {
             level: bevy::log::Level::DEBUG,
             ..Default::default()
@@ -52,10 +52,10 @@ fn setup(
             0.0, 0.0, 1000.0,
         ))));
 
-    for y in -half_y..half_y {
-        for x in -half_x..half_x {
+    for y in -half_y..=half_y {
+        for x in -half_x..=half_x {
             let position = Vec2::new(x as f32, y as f32);
-            let translation = (position * tile_size).extend(rng.gen::<f32>());
+            let translation = (position * tile_size).extend(0.0);
             let rotation = Quat::from_rotation_z(rng.gen::<f32>());
             let scale = Vec3::splat(1.0);
 
@@ -124,7 +124,7 @@ fn setup(
             turn_speed: TurnSpeed::default(),
             max_turn_speed: MaxTurnSpeed::new(3.0),
             mass: Mass(1.0),
-            thrust: Thrust(0.0),
+            thrust: Thrust(10.0),
             heading: Heading::default()
         }
     )

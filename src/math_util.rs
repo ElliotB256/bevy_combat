@@ -24,3 +24,19 @@ pub fn get_angle_difference(target: f32, initial: f32) -> f32 {
     let n = 2.0 * std::f32::consts::PI;
     return (a - (a / n).floor() * n) - std::f32::consts::PI;
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_angle_difference() {
+        let pi = std::f32::consts::PI;
+        assert!(get_angle_difference(0.0, 1.0) - -1.0 < 1.0e-4);
+        assert!(get_angle_difference(1.0, 0.0) - 1.0 < 1.0e-4);
+        assert!(get_angle_difference(pi, 1.0) - (pi-1.0) < 1.0e-4);
+        assert!(get_angle_difference(1.0, pi) - (1.0 - pi) < 1.0e-4);
+        assert!(get_angle_difference(0.5, 2.0*pi-0.5) - 1.0 < 1.0e-4);
+        assert!(get_angle_difference(2.0*pi-0.5, 0.5) - -1.0 < 1.0e-4);
+    }
+}
