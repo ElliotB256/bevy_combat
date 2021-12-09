@@ -23,11 +23,11 @@ pub fn turn_to_destination(
         &TurnToDestinationBehavior,
         &GlobalTransform,
         &MaxTurnSpeed,
-        &mut Heading,
+        &Heading,
         &mut TurnSpeed,
     )>,
 ) {
-    for (behavior, transform, max_turn_speed, mut heading, mut turn_speed) in query.iter_mut() {
+    for (behavior, transform, max_turn_speed, heading, mut turn_speed) in query.iter_mut() {
         // // Determine desired heading to target
         let delta = behavior.destination - transform.translation;
         let desired_heading = get_heading_to_point(delta);
@@ -38,9 +38,7 @@ pub fn turn_to_destination(
             * max_turn_speed
                 .radians_per_second
                 .min(diff.abs() / FIXED_TIME_STEP);
-
-        heading.radians = desired_heading;
-        //println!("desired_heading: {:?}, heading: {:?}, turn_speed: {:?}.", desired_heading, heading.radians, turn_speed.radians_per_second);
+        //println!("destination: {:?}, delta: {:?}.", behavior.destination, delta);
     }
     //println!("turn_to_destination: {:?} entities.", query.iter_mut().len());
 }
@@ -77,21 +75,21 @@ pub fn pursue(
             }
             Ok(target_transform) => {
                 turn_to.destination = target_transform.translation;
-                //println!("entity: {:?}, destination: {:?}.", target.0.expect("target"), turn_to.destination);
+                
                 // if too close to target, evasive manoeuvre
                 let delta = target_transform.translation - transform.translation;
+                //println!("entity: {:?}, destination: {:?}, delta: {:?}.", target.0.expect("target"), turn_to.destination, delta);
                 if delta.length_squared() < PROXIMITY_RADIUS * PROXIMITY_RADIUS {
                     commands
                         .entity(entity)
                         .remove_bundle::<(TurnToDestinationBehavior, PursueBehavior)>();
                     commands.entity(entity).insert(PeelManoeuvreBehavior);
                 }
-                //println!("destination: {:?}.", turn_to.destination);
                 ok_count = ok_count + 1;
             }
         }
     }
-    println!("pursue: {:?} entities, {:?} err, {:?} ok.", query.iter_mut().len(), err_count, ok_count);
+    //println!("pursue: {:?} entities, {:?} err, {:?} ok.", query.iter_mut().len(), err_count, ok_count);
 }
 
 /// A 'peel' manoeuvre causes an entity to move away from its target.
@@ -156,5 +154,5 @@ pub fn peel_manoeuvre(
             }
         }
     }
-    println!("peel: {:?} entities, {:?} err, {:?} ok.", query.iter_mut().len(), err_count, ok_count);
+    //println!("peel: {:?} entities, {:?} err, {:?} ok.", query.iter_mut().len(), err_count, ok_count);
 }

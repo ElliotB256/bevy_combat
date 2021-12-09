@@ -16,7 +16,7 @@ pub fn do_roaming(mut query: Query<(
     &GlobalTransform,
     &RoamBehavior,
     &mut TurnToDestinationBehavior
-)>) {
+), With<IdleBehavior>>) {
     let mut rng = rand::thread_rng();
 
     for (transform, roam, mut turn_to_destination) in query.iter_mut() {

@@ -55,9 +55,9 @@ fn update_translation(mut query: Query<(&Velocity, &mut Transform)>) {
     }
 }
 
-fn update_rotation(mut query: Query<(&TurnSpeed, &mut Transform)>) {
-    for (rps, mut trans) in query.iter_mut() {
-        trans.rotation = trans.rotation * (Quat::from_rotation_z(rps.radians_per_second * FIXED_TIME_STEP));
+fn update_rotation(mut query: Query<(&Heading, &mut Transform)>) {
+    for (heading, mut trans) in query.iter_mut() {
+        trans.rotation = Quat::from_rotation_z(heading.radians - std::f32::consts::FRAC_PI_2);
     }
 }
 
@@ -73,11 +73,16 @@ fn calculate_speed(mut query: Query<(&MaxSpeed, &mut Speed)>) {
     }
 }
 
-fn update_heading(mut query: Query<(&GlobalTransform, &mut Heading)>) {
-    for (transform, mut heading) in query.iter_mut() {
-        let mut forward = transform.local_y();
-        forward.z = 0.0;
-        heading.radians = get_heading_to_point(forward);
+fn update_heading(mut query: Query<(&TurnSpeed, &mut Heading)>) {
+    for (turn_speed, mut heading) in query.iter_mut() {
+        heading.radians += turn_speed.radians_per_second * FIXED_TIME_STEP;
+        let two_pi = 2.0 * std::f32::consts::PI;
+        while heading.radians > two_pi {
+            heading.radians -= two_pi;
+        }
+        while heading.radians < 0.0 {
+            heading.radians += two_pi;
+        }
     }
 }
 
@@ -107,8 +112,8 @@ impl Plugin for MovementPlugin {
             update_heading
                 .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .label(MovementSystems::UpdateHeading),
-        ).add_system_to_stage(
+                .label(MovementSystems::UpdateHeading));
+        app.add_system_to_stage(
             CoreStage::Update,
             calculate_max_speed
                 .system()
