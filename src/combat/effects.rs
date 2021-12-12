@@ -61,7 +61,6 @@ pub fn apply_effects (
                 Effect
             )
         );
-        println!("Spawning an effect.");
 
         if let Ok(target_transform) = pos_query.get_component::<GlobalTransform>(target.0.expect("target is none")) {
             commands.entity(spawned).insert(

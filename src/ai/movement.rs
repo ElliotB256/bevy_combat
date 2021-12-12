@@ -15,7 +15,7 @@ pub struct TurnToDestinationBehavior {
 
 #[derive(Default)]
 pub struct PursueBehavior;
-pub const PROXIMITY_RADIUS: f32 = 16.0;
+pub const PROXIMITY_RADIUS: f32 = 64.0;
 
 /// Turns entities with a [TurnToDestinationBehavior](TurnToDestinationBehavior.struct.html) towards their destination.
 pub fn turn_to_destination(
@@ -96,7 +96,7 @@ pub fn pursue(
 /// 
 /// It is usually triggered when the entity gets too close.
 pub struct PeelManoeuvreBehavior;
-const ENGAGEMENT_RADIUS: f32 = 64.0;
+const ENGAGEMENT_RADIUS: f32 = 128.0;
 
 pub fn peel_manoeuvre(
     mut commands: Commands,

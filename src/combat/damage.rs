@@ -23,7 +23,7 @@ pub fn apply_damage(
         if let Some(target_entity) = target.0 {
             if let Ok(mut health) = health_query.get_mut(target_entity) {
                 health.0 -= damage.0;
-                println!("damage dealt to {:?}! health now {:?}.", target_entity, health.0);
+                //println!("damage dealt to {:?}! health now {:?}.", target_entity, health.0);
             }
         }
     }
