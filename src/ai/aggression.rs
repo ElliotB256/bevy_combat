@@ -74,7 +74,7 @@ pub fn do_retargetting(
     }
 }
 
-use crate::combat::{Health, MaxHealth, Team};
+use crate::combat::{mortal::{Health, MaxHealth}, Team};
 use multimap::MultiMap;
 
 pub const HASH_CELL_SIZE : f32 = 50.0;

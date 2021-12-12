@@ -5,10 +5,10 @@ use bevy::{
 };
 
 use rand::Rng;
-use bevy_combat::movement::*;
+use bevy_combat::{movement::*, combat::mortal::Mortal, fx::{death::DeathEffect, animated::AnimatedEffects}};
 use bevy_combat::ai::{AIPlugin, movement::TurnToDestinationBehavior, idle::IdleBehavior};
 use bevy_combat::ai::aggression::*;
-use bevy_combat::combat::{Health, MaxHealth, Target, Team};
+use bevy_combat::combat::{mortal::{Health, MaxHealth}, Target, Team};
 
 pub struct PrintTimer(Timer);
 pub struct Position(Transform);
@@ -40,7 +40,7 @@ fn setup(
     let mut rng = rand::thread_rng();
 
     let tile_size = Vec2::splat(16.0);
-    let map_size = Vec2::splat(10.0);
+    let map_size = Vec2::splat(5.0);
 
     let half_x = (map_size.x / 2.0) as i32;
     let half_y = (map_size.y / 2.0) as i32;
@@ -57,7 +57,8 @@ fn setup(
 
     for y in -half_y..=half_y {
         for x in -half_x..=half_x {
-            let position = Vec2::new(x as f32, y as f32);
+            let team_num = if x < 0 { 1 } else {2};
+            let position = Vec2::new(x as f32 + (x as f32).signum() * 20.0, y as f32);
             let translation = (position * tile_size).extend(0.0);
             let rotation = Quat::from_rotation_z(rng.gen::<f32>());
             let scale = Vec3::splat(1.0);
@@ -97,10 +98,11 @@ fn setup(
                         target_same_team: false
                     },
                     Target::default(),
-                    Team { 0: 2 },
+                    Team { 0: team_num },
                     Health { 0: 100.0 },
                     MaxHealth { 0: 100.0 },
-                    AgentCategory::FIGHTER
+                    AgentCategory::FIGHTER,
+                    Mortal
                 )
             )
             .insert_bundle(
@@ -116,54 +118,14 @@ fn setup(
                         spawn_effect: bevy_combat::templates::weapons::small_pulse_laser_attack
                     }
                 )
-            );
-
+            )
+            .insert(DeathEffect {
+                time_to_explosion: 0.1,
+                dying_explosion: AnimatedEffects::SmallExplosion,
+                death_explosion: AnimatedEffects::MediumExplosion,
+            });
         }
     }
-
-    let rotation = Quat::from_rotation_z(rng.gen::<f32>());
-    let scale = Vec3::splat(3.0);
-    commands.spawn().insert_bundle(SpriteBundle {
-        material: sprite_handle.clone(),
-        transform: Transform {
-            translation: Vec3::new(200.0,200.0,0.0),
-            rotation,
-            scale,
-        },
-        sprite: Sprite::new(tile_size),
-        ..Default::default()
-    }
-    ).insert_bundle(
-        MovementBundle {
-            velocity: Velocity::default(),
-            speed: Speed::default(),
-            max_speed: MaxSpeed::default(),
-            turn_speed: TurnSpeed::default(),
-            max_turn_speed: MaxTurnSpeed::new(3.0),
-            mass: Mass(1.0),
-            thrust: Thrust(50.0),
-            heading: Heading::default()
-        }
-    )
-    .insert(IdleBehavior)
-    .insert(TurnToDestinationBehavior { destination: Vec3::default() })
-    .insert(bevy_combat::ai::idle::RoamBehavior { centre: Vec3::default(), radius: 300.0 })
-    .insert_bundle(
-        (
-            AggroRadius { 0: 300.0 },
-            AggroLocation::default(),
-            TargetingOrders { 
-                preferred: AgentCategory::FIGHTER,
-                discouraged: AgentCategory::CRUISER,
-                target_same_team: false
-            },
-            Target::default(),
-            Team { 0: 1 },
-            Health { 0: 100.0 },
-            MaxHealth { 0: 100.0 },
-            AgentCategory::FIGHTER
-        )
-    );
 
     commands.insert_resource(bevy_combat::game::GameTimeDelta { 0: 1.0/60.0 });
 }

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::{Health, effects::Effect, Target};
+use super::{mortal::Health, effects::Effect, Target};
 
 /// Entity will deal a specified amount of damage.
 pub struct Damage(pub f32);

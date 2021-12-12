@@ -6,6 +6,7 @@ pub mod tools;
 pub mod effects;
 pub mod attack;
 pub mod damage;
+pub mod mortal;
 
 pub struct Target(pub Option<Entity>);
 
@@ -18,9 +19,6 @@ impl Default for Target {
 /// The team an entity is assigned to.
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub struct Team(pub i32);
-
-pub struct Health(pub f32);
-pub struct MaxHealth(pub f32);
 
 #[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
 pub enum CombatSystems {
@@ -49,6 +47,12 @@ impl Plugin for CombatPlugin {
             )
             .with_system(
                 damage::apply_damage.system().label(damage::DamageSystems::ApplyDamage)
+            )
+            .with_system(
+                mortal::update_dieing.system().label(mortal::MortalSystems::UpdateDieing)
+            )
+            .with_system(
+                mortal::check_for_dieing_entities.system().label(mortal::MortalSystems::CheckForDieingEntities)
             )
         );
     }

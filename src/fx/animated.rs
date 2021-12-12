@@ -2,6 +2,45 @@
 
 use bevy::prelude::*;
 
+struct AnimatedEffectPrefabs {
+    small_explosion: AnimatedEffectData,
+    small_muzzle_flare: AnimatedEffectData,
+    medium_explosion: AnimatedEffectData
+}
+
+fn setup(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+) {
+    let resources = AnimatedEffectPrefabs {
+        small_explosion: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
+            asset_server.load("art/small_explosion.png"),
+            Vec2::new(16.0, 16.0),
+            8,
+            1,
+        )),
+        0.1),
+        small_muzzle_flare: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
+            asset_server.load("art/muzzle_flare.png"),
+            Vec2::new(8.0, 8.0),
+            4,
+            1,
+        )),
+        0.05),
+        medium_explosion: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
+            asset_server.load("art/large_explosion.png"),
+            Vec2::new(32.0, 32.0),
+            9,
+            1,
+        )),
+        0.1),
+    };
+
+    commands.insert_resource(resources);
+}
+
+
 pub struct AnimatedEffectsPlugin;
 
 impl Plugin for AnimatedEffectsPlugin {
@@ -18,9 +57,22 @@ pub struct CreateAnimatedEffect {
     pub effect: AnimatedEffects
 }
 
+#[derive(Clone)]
 pub enum AnimatedEffects {
     SmallExplosion,
     MuzzleFlare,
+    MediumExplosion
+}
+
+struct AnimatedEffectData {
+    atlas: Handle<TextureAtlas>,
+    frame_time: f32
+}
+
+impl AnimatedEffectData {
+    pub fn new(atlas: Handle<TextureAtlas>, frame_time: f32) -> Self {
+        AnimatedEffectData { atlas, frame_time }
+    }
 }
 
 fn update_animated(
@@ -61,7 +113,8 @@ fn create_animated(
 
         let prefab = match effect.effect {
             AnimatedEffects::SmallExplosion => &prefabs.small_explosion,
-            AnimatedEffects::MuzzleFlare => &prefabs.small_muzzle_flare, 
+            AnimatedEffects::MuzzleFlare => &prefabs.small_muzzle_flare,
+            AnimatedEffects::MediumExplosion => &prefabs.medium_explosion, 
         };
 
         // Spawn an effect
@@ -79,48 +132,4 @@ fn create_animated(
             commands.entity(spawned).insert(parent.clone());
         }
     }
-}
-
-struct AnimatedEffectData {
-    atlas: Handle<TextureAtlas>,
-    frame_time: f32
-}
-
-impl AnimatedEffectData {
-    pub fn new(atlas: Handle<TextureAtlas>, frame_time: f32) -> Self {
-        AnimatedEffectData { atlas, frame_time }
-    }
-}
-
-struct AnimatedEffectPrefabs {
-    small_explosion: AnimatedEffectData,
-    small_muzzle_flare: AnimatedEffectData,
-}
-
-fn setup(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-) {
-    let texture_handle = asset_server.load("art/small_explosion.png");
-    let texture_atlas = TextureAtlas::from_grid(texture_handle, Vec2::new(16.0, 16.0), 8, 1);
-    let texture_atlas_handle = texture_atlases.add(texture_atlas);
-
-    let small_explosion = AnimatedEffectData {
-        atlas: texture_atlas_handle,
-        frame_time: 0.1
-    };
-
-    let resources = AnimatedEffectPrefabs {
-        small_explosion,
-        small_muzzle_flare: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
-            asset_server.load("art/muzzle_flare.png"),
-            Vec2::new(8.0, 8.0),
-            4,
-            1,
-        )),
-        0.05),
-    };
-
-    commands.insert_resource(resources);
 }
