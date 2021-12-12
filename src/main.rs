@@ -20,7 +20,7 @@ fn main() {
         .add_plugin(AIPlugin)
         .add_plugin(MovementPlugin)
         .add_plugin(bevy_combat::combat::CombatPlugin)
-        .add_plugin(bevy_combat::fx::explosion::ExplosionsPlugin)
+        .add_plugin(bevy_combat::fx::animated::AnimatedEffectsPlugin)
         .add_plugin(bevy_combat::fx::EffectsPlugin)
         .insert_resource(bevy::log::LogSettings {
             level: bevy::log::Level::DEBUG,
@@ -141,7 +141,7 @@ fn setup(
             turn_speed: TurnSpeed::default(),
             max_turn_speed: MaxTurnSpeed::new(3.0),
             mass: Mass(1.0),
-            thrust: Thrust(10.0),
+            thrust: Thrust(50.0),
             heading: Heading::default()
         }
     )

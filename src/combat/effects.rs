@@ -4,8 +4,8 @@ use bevy::{prelude::*};
 
 use super::{Target, tools::TargettedTool};
 
-/// The location an effect comes from.
-pub struct SourceLocation(pub Vec3);
+/// Transform of the effect source.
+pub struct SourceTransform(pub GlobalTransform);
 
 /// The location where an effect is applied.
 pub struct EffectLocation(pub Vec3);
@@ -56,7 +56,7 @@ pub fn apply_effects (
             (
                 Target { 0: target.0 }, 
                 Instigator { 0: entity },
-                SourceLocation { 0: transform.translation },
+                SourceTransform { 0: transform.clone() },
                 Effectiveness::default(),
                 Effect
             )

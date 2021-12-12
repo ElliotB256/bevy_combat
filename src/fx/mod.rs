@@ -1,17 +1,18 @@
 //! Special effects and particle systems.
 
-pub mod explosion;
+pub mod animated;
 
 use bevy::prelude::*;
-use rand::{thread_rng, Rng};
+use rand::{Rng};
 
-use crate::combat::{damage::Damage, effects::EffectLocation};
+use crate::combat::{damage::Damage, effects::{EffectLocation, Instigator}};
 
 pub struct EffectsPlugin;
 
 impl Plugin for EffectsPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.add_system(create_explosions_for_damage.system());
+        app.add_system(create_muzzle_flares.system());
     }
 }
 
@@ -24,9 +25,22 @@ fn create_explosions_for_damage(
     for (_damage, location) in query.iter() {
         let x_offset : f32 = rng.gen_range(-6.0..6.0);
         let y_offset : f32 = rng.gen_range(-6.0..6.0);
-        commands.spawn().insert(explosion::CreateExplosion {
-            
-            translation: location.0 + Vec3::new(x_offset, y_offset, 0.1)
+        commands.spawn().insert(animated::CreateAnimatedEffect {
+            effect: animated::AnimatedEffects::SmallExplosion,
+            transform: Transform::from_translation(location.0 + Vec3::new(x_offset, y_offset, 0.1))
         });
+    }
+}
+
+fn create_muzzle_flares(
+    mut commands: Commands,
+    query: Query<(&Damage, &Instigator)>,
+) {
+    for (_damage, instigator) in query.iter() {
+        commands.spawn().insert(animated::CreateAnimatedEffect {
+            effect: animated::AnimatedEffects::MuzzleFlare,
+            transform: Transform::identity()
+        })
+        .insert(Parent { 0: instigator.0 });
     }
 }
