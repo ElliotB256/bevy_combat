@@ -19,6 +19,7 @@ fn main() {
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
         .add_plugin(AIPlugin)
         .add_plugin(MovementPlugin)
+        .add_plugin(bevy_combat::combat::CombatPlugin)
         .insert_resource(bevy::log::LogSettings {
             level: bevy::log::Level::DEBUG,
             ..Default::default()
@@ -98,6 +99,20 @@ fn setup(
                     Health { 0: 100.0 },
                     MaxHealth { 0: 100.0 },
                     AgentCategory::FIGHTER
+                )
+            )
+            .insert_bundle(
+                (
+                    bevy_combat::combat::tools::Cooldown::new(1.0),
+                    bevy_combat::combat::tools::TargettedTool {
+                        range: 100.0,
+                        cone: 0.4,
+                        armed: true,
+                        firing: false
+                    },
+                    bevy_combat::combat::effects::Effector { 
+                        spawn_effect: bevy_combat::templates::weapons::small_pulse_laser_attack
+                    }
                 )
             );
 

@@ -30,6 +30,10 @@ impl Cooldown {
     }
     /// Is the cooldown ready?
     pub fn is_ready(&self) -> bool { self.remaining <= 0.0 }
+
+    pub fn new(duration: f32) -> Self {
+        Cooldown { remaining: duration, duration }
+    }
 }
 
 /// Updates all cooldowns, decreasing remaining time by dt.
@@ -89,4 +93,10 @@ pub fn fire_targetted_tools(
         
     }
 
+}
+
+#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
+pub enum ToolSystems {
+    FireTargettedTools,
+    UpdateCooldowns
 }

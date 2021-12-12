@@ -1,6 +1,6 @@
-use bevy::{core::FixedTimestep, prelude::*};
+use bevy::{prelude::*};
 use crate::constants::FIXED_TIME_STEP;
-use crate::math_util::get_heading_to_point;
+use crate::game::game_loop_run_criteria;
 
 #[derive(Default)]
 pub struct Velocity(pub Vec3);
@@ -92,7 +92,8 @@ pub enum MovementSystems {
     CalculateMaxSpeed,
     UpdateRotation,
     UpdateVelocity,
-    UpdateHeading
+    UpdateHeading,
+    Set
 }
 
 #[derive(Default)]
@@ -100,55 +101,41 @@ pub struct MovementPlugin;
 
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut AppBuilder) {
-        // app.register_type::<Velocity>()
-        // .register_type::<Speed>()
-        // .register_type::<TurnSpeed>()
-        // .register_type::<Mass>()
-        // .register_type::<Thrust>()
-        // .register_type::<MaxSpeed>();
 
-        app.add_system_to_stage(
-            CoreStage::Update,
-            update_heading
+        app.add_system_set(
+            SystemSet::new().label(MovementSystems::Set)
+            .with_run_criteria(game_loop_run_criteria())
+            .with_system(
+                update_heading
+                    .system()
+                    .label(MovementSystems::UpdateHeading)
+                )
+            .with_system(
+                calculate_max_speed
                 .system()
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .label(MovementSystems::UpdateHeading));
-        app.add_system_to_stage(
-            CoreStage::Update,
-            calculate_max_speed
-                .system()
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-        )
-        .add_system_to_stage(
-            CoreStage::Update,
-            calculate_speed
+                .label(MovementSystems::CalculateMaxSpeed))
+            .with_system(
+                calculate_speed
                 .system()
                 .label(MovementSystems::CalculateSpeed)
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .after(MovementSystems::CalculateMaxSpeed),
-        )
-        .add_system_to_stage(
-            CoreStage::Update,
-            update_rotation
+                .after(MovementSystems::CalculateMaxSpeed)
+            )
+            .with_system(update_rotation
                 .system()
                 .label(MovementSystems::UpdateRotation)
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .after(MovementSystems::UpdateHeading),
-        )
-        .add_system_to_stage(
-            CoreStage::Update,
-            update_velocity
+                .after(MovementSystems::UpdateHeading)
+            )
+            .with_system(
+                update_velocity
                 .system()
                 .label(MovementSystems::UpdateVelocity)
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .after(MovementSystems::UpdateRotation),
-        )
-        .add_system_to_stage(
-            CoreStage::Update,
-            update_translation
+                .after(MovementSystems::UpdateRotation)
+            )
+            .with_system(
+                update_translation
                 .system()
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .after(MovementSystems::UpdateVelocity),
+                .after(MovementSystems::UpdateVelocity)
+            )
         );
     }
 }

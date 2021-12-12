@@ -4,7 +4,11 @@ use bevy::{prelude::*};
 
 use super::{Target, tools::TargettedTool};
 
+/// The location an effect comes from.
 pub struct SourceLocation(pub Vec3);
+
+/// The location where an effect is applied.
+pub struct EffectLocation(pub Vec3);
 
 /// The entity responsible for causing an effect.
 pub struct Instigator(pub Entity);
@@ -18,44 +22,53 @@ impl Default for Effectiveness {
     }
 }
 
-type Spawner = fn(&Commands) -> Entity;
+type Spawner = fn(&mut Commands) -> Entity;
 
-pub struct Effect {
+pub struct Effector {
     pub spawn_effect: Spawner
 }
 
+pub struct Effect;
+
 pub fn apply_effects (
     mut commands: Commands,
-    query: Query<(
+    mut query: Query<(
         Entity,
         &Target,
         &GlobalTransform,
-        &TargettedTool,
-        &Effect,
+        &mut TargettedTool,
+        &Effector,
     )>,
     pos_query: Query<&GlobalTransform>,
 ) {
 
-    for (entity, target, transform, tool, effect) in query.iter() {
+    for (entity, target, transform, mut tool, effect) in query.iter_mut() {
         
         if !tool.firing || target.0.is_none() {
             continue;
         }
 
+        tool.firing = false;
+
         // Spawn the effect
-        let spawned = (effect.spawn_effect)(&commands);
+        let spawned = (effect.spawn_effect)(&mut commands);
         commands.entity(spawned).insert_bundle(
             (
                 Target { 0: target.0 }, 
                 Instigator { 0: entity },
                 SourceLocation { 0: transform.translation },
-                Effectiveness::default()
+                Effectiveness::default(),
+                Effect
             )
         );
+        println!("Spawning an effect.");
 
-        // moved Attack::new to ammo creation.
-        //             if (transforms.HasComponent(target.Value))
-        //                 buffer.AddComponent(entityInQueryIndex, attack, new HitLocation { Position = transforms[target.Value].Position });
+        if let Ok(target_transform) = pos_query.get_component::<GlobalTransform>(target.0.expect("target is none")) {
+            commands.entity(spawned).insert(
+                EffectLocation { 0: target_transform.translation }
+            );
+        }
+        
     }
 }
 
@@ -70,4 +83,10 @@ pub fn remove_old_effects (
     for (entity, _effect) in query.iter() {
         commands.entity(entity).despawn_recursive();
     }
+}
+
+#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
+pub enum EffectSystems {
+    RemoveOldEffects,
+    ApplyEffects
 }
