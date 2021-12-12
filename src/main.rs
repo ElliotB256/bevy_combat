@@ -20,6 +20,8 @@ fn main() {
         .add_plugin(AIPlugin)
         .add_plugin(MovementPlugin)
         .add_plugin(bevy_combat::combat::CombatPlugin)
+        .add_plugin(bevy_combat::fx::explosion::ExplosionsPlugin)
+        .add_plugin(bevy_combat::fx::EffectsPlugin)
         .insert_resource(bevy::log::LogSettings {
             level: bevy::log::Level::DEBUG,
             ..Default::default()
@@ -38,7 +40,7 @@ fn setup(
     let mut rng = rand::thread_rng();
 
     let tile_size = Vec2::splat(16.0);
-    let map_size = Vec2::splat(2.0);
+    let map_size = Vec2::splat(4.0);
 
     let half_x = (map_size.x / 2.0) as i32;
     let half_y = (map_size.y / 2.0) as i32;
