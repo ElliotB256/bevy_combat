@@ -1,6 +1,6 @@
 # bevy_combat
 
-It's a bevy port of the [ECS Combat](https://github.com/TeamAtomECS/AtomECS) I wrote in Unity.
+It's a bevy port of the [ECS Combat](https://github.com/ElliotB256/ECSCombat/) I wrote in Unity.
 
 ## Added so far
 
