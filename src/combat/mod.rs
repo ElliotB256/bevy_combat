@@ -28,6 +28,8 @@ pub enum CombatSystems {
 #[derive(Default)]
 pub struct CombatPlugin;
 
+static DESPAWN_STAGE: &str = "despawn_stage";
+
 impl Plugin for CombatPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.add_system_set(
@@ -54,6 +56,10 @@ impl Plugin for CombatPlugin {
             .with_system(
                 mortal::check_for_dieing_entities.system().label(mortal::MortalSystems::CheckForDieingEntities)
             )
+        );
+        app.add_stage_after(CoreStage::Update, DESPAWN_STAGE, SystemStage::single_threaded());
+        app.add_system_to_stage(DESPAWN_STAGE, 
+            mortal::dispose_dieing.system()
         );
     }
 }

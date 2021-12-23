@@ -16,7 +16,8 @@ pub struct Mortal;
 /// This entity is doomed - there is no saving it. Call this the 'death throes' if you will.
 pub struct Dieing {
     pub remaining_time: f32,
-    pub dead: bool
+    pub dead: bool,
+    pub dispose: bool
 }
 
 
@@ -40,7 +41,7 @@ pub fn check_for_dieing_entities(
                 // There's a small chance things have a few seconds of death throes.
                 rng.gen_range(1.0..4.0)
             };
-            commands.entity(entity).insert(Dieing {remaining_time: time, dead: false});
+            commands.entity(entity).insert(Dieing {remaining_time: time, dead: false, dispose: false});
         }
     }
 }
@@ -52,10 +53,9 @@ pub fn check_for_dieing_entities(
 /// The next update, the entity is despawned.
 pub fn update_dieing(
     dt: Res<GameTimeDelta>,
-    mut commands: Commands,
-    mut query: Query<(Entity, &mut Dieing)>
+    mut query: Query<&mut Dieing>
 ) {
-    for (entity, mut dieing) in query.iter_mut() {
+    for mut dieing in query.iter_mut() {
         dieing.remaining_time -= dt.0;
         if dieing.remaining_time < 0.0
         {
@@ -63,8 +63,19 @@ pub fn update_dieing(
             {
                 dieing.dead = true;
             } else {
-                commands.entity(entity).despawn_recursive();
+                dieing.dispose = true;
             }
+        }
+    }
+}
+
+pub fn dispose_dieing(
+    mut commands: Commands,
+    query: Query<(Entity, &Dieing)>
+) {
+    for (entity, dieing) in query.iter() {
+        if dieing.dispose {
+            commands.entity(entity).despawn_recursive();
         }
     }
 }
