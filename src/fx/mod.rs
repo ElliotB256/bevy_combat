@@ -2,6 +2,7 @@
 
 pub mod animated;
 pub mod death;
+pub mod beams;
 
 use bevy::prelude::*;
 use rand::{Rng};

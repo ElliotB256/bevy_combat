@@ -22,6 +22,7 @@ fn main() {
         .add_plugin(bevy_combat::combat::CombatPlugin)
         .add_plugin(bevy_combat::fx::animated::AnimatedEffectsPlugin)
         .add_plugin(bevy_combat::fx::EffectsPlugin)
+        .add_plugin(bevy_combat::fx::beams::BeamEffectPlugin)
         .insert_resource(bevy::log::LogSettings {
             level: bevy::log::Level::DEBUG,
             ..Default::default()
@@ -40,7 +41,7 @@ fn setup(
     let mut rng = rand::thread_rng();
 
     let tile_size = Vec2::splat(16.0);
-    let map_size = Vec2::splat(5.0);
+    let map_size = Vec2::splat(6.0);
 
     let half_x = (map_size.x / 2.0) as i32;
     let half_y = (map_size.y / 2.0) as i32;
@@ -110,7 +111,7 @@ fn setup(
                     bevy_combat::combat::tools::Cooldown::new(1.0),
                     bevy_combat::combat::tools::TargettedTool {
                         range: 100.0,
-                        cone: 0.4,
+                        cone: 0.15,
                         armed: true,
                         firing: false
                     },

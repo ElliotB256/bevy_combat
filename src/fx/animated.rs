@@ -5,7 +5,8 @@ use bevy::prelude::*;
 struct AnimatedEffectPrefabs {
     small_explosion: AnimatedEffectData,
     small_muzzle_flare: AnimatedEffectData,
-    medium_explosion: AnimatedEffectData
+    medium_explosion: AnimatedEffectData,
+    laser_beam: AnimatedEffectData
 }
 
 fn setup(
@@ -35,6 +36,13 @@ fn setup(
             1,
         )),
         0.1),
+        laser_beam: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
+            asset_server.load("art/laser.png"),
+            Vec2::new(4.0, 4.0),
+            4,
+            1,
+        )),
+        0.05),
     };
 
     commands.insert_resource(resources);
@@ -61,7 +69,8 @@ pub struct CreateAnimatedEffect {
 pub enum AnimatedEffects {
     SmallExplosion,
     MuzzleFlare,
-    MediumExplosion
+    MediumExplosion,
+    LaserBeam
 }
 
 struct AnimatedEffectData {
@@ -114,7 +123,8 @@ fn create_animated(
         let prefab = match effect.effect {
             AnimatedEffects::SmallExplosion => &prefabs.small_explosion,
             AnimatedEffects::MuzzleFlare => &prefabs.small_muzzle_flare,
-            AnimatedEffects::MediumExplosion => &prefabs.medium_explosion, 
+            AnimatedEffects::MediumExplosion => &prefabs.medium_explosion,
+            AnimatedEffects::LaserBeam => &prefabs.laser_beam
         };
 
         // Spawn an effect
