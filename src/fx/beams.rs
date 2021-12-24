@@ -26,15 +26,20 @@ fn get_transform(start: Vec3, end: Vec3, width: f32) -> Transform {
 
 fn spawn_beams(
     mut commands: Commands,
-    query: Query<(&SourceTransform, &EffectLocation)>,
+    query: Query<(&BeamStyle, &SourceTransform, &EffectLocation)>,
 ) {
-    for (source, effect) in query.iter() {
-        let transform = get_transform(source.0.translation, effect.0, 1.0);
+    for (style, source, effect) in query.iter() {
+        let transform = get_transform(source.0.translation, effect.0, style.width);
         commands.spawn().insert(
             CreateAnimatedEffect {
                 transform: transform,
-                effect: AnimatedEffects::LaserBeam
+                effect: style.effect
             }
         );
     }
+}
+
+pub struct BeamStyle {
+    pub effect: AnimatedEffects,
+    pub width: f32
 }
