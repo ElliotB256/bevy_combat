@@ -4,7 +4,7 @@ use bevy::{
     prelude::*,
 };
 
-use bevy_combat::ai::aggression::*;
+use bevy_combat::{ai::aggression::*, combat::shields::Shield};
 use bevy_combat::ai::{idle::IdleBehavior, movement::TurnToDestinationBehavior, AIPlugin};
 use bevy_combat::combat::{
     mortal::{Health, MaxHealth},
@@ -137,7 +137,13 @@ fn setup(
                 time_to_smoke: 0.05,
                 dying_explosion: AnimatedEffects::SmallExplosion,
                 death_explosion: AnimatedEffects::MediumExplosion,
-            });
+            })
+            .insert(
+                Shield {
+                    health: 100.0,
+                    radius: 64.0
+                }
+            );
     }
 
     // Team 2
