@@ -59,7 +59,7 @@ impl Plugin for CombatPlugin {
         );
         app.add_stage_after(CoreStage::Update, DESPAWN_STAGE, SystemStage::single_threaded());
         app.add_system_to_stage(DESPAWN_STAGE, 
-            mortal::dispose_dieing.system()
+            mortal::dispose_dieing.system().with_run_criteria(game_loop_run_criteria())
         );
     }
 }

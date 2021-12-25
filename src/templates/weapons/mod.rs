@@ -3,7 +3,7 @@
 
 use bevy::{prelude::*};
 
-use crate::{combat::{attack::Attack, damage::Damage}, fx::beams::BeamStyle};
+use crate::{combat::{attack::Attack, damage::Damage}, fx::{beams::BeamStyle, HitEffect}};
 
 /// The attack from a small pulsed laser.
 pub fn pulse_laser_attack(commands: &mut Commands) -> Entity {
@@ -14,6 +14,9 @@ pub fn pulse_laser_attack(commands: &mut Commands) -> Entity {
             BeamStyle { 
                 effect: crate::fx::animated::AnimatedEffects::BlueLaserBeam,
                 width: 1.0
+            },
+            HitEffect {
+                effect: crate::fx::animated::AnimatedEffects::SmallExplosion
             }
         )
     ).id()
@@ -27,6 +30,9 @@ pub fn small_pulse_laser_attack(commands: &mut Commands) -> Entity {
             BeamStyle { 
                 effect: crate::fx::animated::AnimatedEffects::GreenLaserBeam,
                 width: 0.5
+            },
+            HitEffect {
+                effect: crate::fx::animated::AnimatedEffects::TinyPlusExplosion
             }
         )
     ).id()

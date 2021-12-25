@@ -7,7 +7,9 @@ struct AnimatedEffectPrefabs {
     small_muzzle_flare: AnimatedEffectData,
     medium_explosion: AnimatedEffectData,
     blue_laser_beam: AnimatedEffectData,
-    green_laser_beam: AnimatedEffectData
+    green_laser_beam: AnimatedEffectData,
+    tiny_plus_explosion: AnimatedEffectData,
+    smoke1: AnimatedEffectData
 }
 
 fn setup(
@@ -51,6 +53,20 @@ fn setup(
             1,
         )),
         0.05),
+        tiny_plus_explosion: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
+            asset_server.load("art/tiny_plus_explosion.png"),
+            Vec2::new(8.0, 8.0),
+            5,
+            1,
+        )),
+        0.05),
+        smoke1: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
+            asset_server.load("art/smoke1.png"),
+            Vec2::new(16.0, 16.0),
+            12,
+            1,
+        )),
+        0.2),
     };
 
     commands.insert_resource(resources);
@@ -79,7 +95,9 @@ pub enum AnimatedEffects {
     MuzzleFlare,
     MediumExplosion,
     BlueLaserBeam,
-    GreenLaserBeam
+    GreenLaserBeam,
+    TinyPlusExplosion,
+    Smoke1
 }
 
 struct AnimatedEffectData {
@@ -134,7 +152,9 @@ fn create_animated(
             AnimatedEffects::MuzzleFlare => &prefabs.small_muzzle_flare,
             AnimatedEffects::MediumExplosion => &prefabs.medium_explosion,
             AnimatedEffects::BlueLaserBeam => &prefabs.blue_laser_beam,
-            AnimatedEffects::GreenLaserBeam => &prefabs.green_laser_beam
+            AnimatedEffects::GreenLaserBeam => &prefabs.green_laser_beam,
+            AnimatedEffects::TinyPlusExplosion => &prefabs.tiny_plus_explosion,
+            AnimatedEffects::Smoke1 => &prefabs.smoke1
         };
 
         // Spawn an effect

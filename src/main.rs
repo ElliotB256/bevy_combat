@@ -54,6 +54,8 @@ fn setup(
             0.0, 0.0, 1000.0,
         ))));
 
+        commands.insert_resource(ClearColor(Color::rgb(0.8, 0.8, 0.8)));
+
         // Team 1
         for y in -10..10 {
             let position = Vec2::new(-20.0, y as f32);
@@ -119,6 +121,7 @@ fn setup(
             )
             .insert(DeathEffect {
                 time_to_explosion: 0.1,
+                time_to_smoke: 0.05,
                 dying_explosion: AnimatedEffects::SmallExplosion,
                 death_explosion: AnimatedEffects::MediumExplosion,
             });
@@ -190,6 +193,7 @@ fn setup(
             )
             .insert(DeathEffect {
                 time_to_explosion: 0.1,
+                time_to_smoke: 0.05,
                 dying_explosion: AnimatedEffects::SmallExplosion,
                 death_explosion: AnimatedEffects::MediumExplosion,
             });
