@@ -2,6 +2,8 @@
 
 use bevy::prelude::*;
 
+use super::beams::BeamTracking;
+
 struct AnimatedEffectPrefabs {
     small_explosion: AnimatedEffectData,
     small_muzzle_flare: AnimatedEffectData,
@@ -142,6 +144,7 @@ fn create_animated(
     mut commands: Commands,
     prefabs: Res<AnimatedEffectPrefabs>,
     query: Query<(Entity, &CreateAnimatedEffect)>,
+    beam_track_query: Query<&BeamTracking>
 ) {
     for (entity, effect) in query.iter() {
         // despawn the creation command
@@ -173,6 +176,11 @@ fn create_animated(
         //}
         if let Some(parent) = effect.parent {
             commands.entity(parent).push_children(&[spawned]);
+        }
+
+        // hacky for now - add beam tracking if it exists
+        if let Ok(beam_tracking) = beam_track_query.get_component::<BeamTracking>(entity) {
+            commands.entity(spawned).insert(beam_tracking.clone());
         }
     }
 }
