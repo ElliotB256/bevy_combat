@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::game::game_loop_run_criteria;
+use crate::game::{game_loop_run_criteria, DESPAWN_STAGE};
 
 pub mod tools;
 pub mod effects;
@@ -28,11 +28,9 @@ pub enum CombatSystems {
 #[derive(Default)]
 pub struct CombatPlugin;
 
-static DESPAWN_STAGE: &str = "despawn_stage";
-
 impl Plugin for CombatPlugin {
     fn build(&self, app: &mut AppBuilder) {
-        app.add_system_set(
+        app.add_system_set_to_stage(CoreStage::Update,
             SystemSet::new().label(CombatSystems::Set)
             .with_run_criteria(game_loop_run_criteria())
             .with_system(
@@ -45,9 +43,6 @@ impl Plugin for CombatPlugin {
                 effects::apply_effects.system().label(effects::EffectSystems::ApplyEffects)
             )
             .with_system(
-                effects::remove_old_effects.system().label(effects::EffectSystems::RemoveOldEffects)
-            )
-            .with_system(
                 damage::apply_damage.system().label(damage::DamageSystems::ApplyDamage)
             )
             .with_system(
@@ -56,10 +51,13 @@ impl Plugin for CombatPlugin {
             .with_system(
                 mortal::check_for_dieing_entities.system().label(mortal::MortalSystems::CheckForDieingEntities)
             )
+            .with_system(
+                effects::remove_old_effects.system().label(effects::EffectSystems::RemoveOldEffects)
+            )
+            
         );
-        app.add_stage_after(CoreStage::Update, DESPAWN_STAGE, SystemStage::single_threaded());
-        app.add_system_to_stage(DESPAWN_STAGE, 
-            mortal::dispose_dieing.system().with_run_criteria(game_loop_run_criteria())
+        app.add_system_to_stage(DESPAWN_STAGE,
+            mortal::dispose_dieing.system()
         );
     }
 }

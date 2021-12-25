@@ -5,7 +5,7 @@ use bevy::{
 };
 
 use rand::Rng;
-use bevy_combat::{movement::*, combat::mortal::Mortal, fx::{death::DeathEffect, animated::AnimatedEffects}};
+use bevy_combat::{movement::*, combat::mortal::Mortal, fx::{death::DeathEffect, animated::AnimatedEffects}, game::BaseGamePlugin};
 use bevy_combat::ai::{AIPlugin, movement::TurnToDestinationBehavior, idle::IdleBehavior};
 use bevy_combat::ai::aggression::*;
 use bevy_combat::combat::{mortal::{Health, MaxHealth}, Target, Team};
@@ -17,6 +17,7 @@ fn main() {
     App::build()
         .add_plugin(LogDiagnosticsPlugin::default())
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
+        .add_plugin(BaseGamePlugin)
         .add_plugin(AIPlugin)
         .add_plugin(MovementPlugin)
         .add_plugin(bevy_combat::combat::CombatPlugin)

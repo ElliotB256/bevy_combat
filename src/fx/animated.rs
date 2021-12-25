@@ -86,7 +86,8 @@ impl Plugin for AnimatedEffectsPlugin {
 /// Component that indicates an explosion should be created at the location of the entity.
 pub struct CreateAnimatedEffect {
     pub transform: Transform,
-    pub effect: AnimatedEffects
+    pub effect: AnimatedEffects,
+    pub parent: Option<Entity>
 }
 
 #[derive(Clone, Copy)]
@@ -141,7 +142,6 @@ fn create_animated(
     mut commands: Commands,
     prefabs: Res<AnimatedEffectPrefabs>,
     query: Query<(Entity, &CreateAnimatedEffect)>,
-    parent_query: Query<&Parent>
 ) {
     for (entity, effect) in query.iter() {
         // despawn the creation command
@@ -168,8 +168,11 @@ fn create_animated(
             .id();
 
         // if we have a parent add them.
-        if let Ok(parent) = parent_query.get_component::<Parent>(entity) {
-            commands.entity(spawned).insert(parent.clone());
+        //if let Ok(parent) = parent_query.get_component::<Parent>(entity) {
+        //    commands.entity(spawned).insert(parent.clone());
+        //}
+        if let Some(parent) = effect.parent {
+            commands.entity(parent).push_children(&[spawned]);
         }
     }
 }

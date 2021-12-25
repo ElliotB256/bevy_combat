@@ -33,7 +33,8 @@ fn spawn_beams(
         commands.spawn().insert(
             CreateAnimatedEffect {
                 transform: transform,
-                effect: style.effect
+                effect: style.effect,
+                parent: None
             }
         );
     }
