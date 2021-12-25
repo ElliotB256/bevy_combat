@@ -65,7 +65,7 @@ fn setup(
     commands.insert_resource(ClearColor(Color::rgb(0.8, 0.8, 0.8)));
 
     // Team 1
-    for y in -10..10 {
+    for _i in 0..20 {
         let position = Vec2::new(-20.0, 0.0) + Vec2::new(rng.gen_range(-5.0..5.0), rng.gen_range(-20.0..20.0));
         let translation = (position * tile_size).extend(0.0);
         let rotation = Quat::from_rotation_z(rng.gen::<f32>());
@@ -115,6 +115,10 @@ fn setup(
                 MaxHealth { 0: 100.0 },
                 AgentCategory::FIGHTER,
                 Mortal,
+                RetargetBehavior {
+                    interval: 4.0,
+                    remaining_time: 4.0,
+                }
             ))
             .insert_bundle((
                 bevy_combat::combat::tools::Cooldown::new(1.0),
@@ -137,7 +141,7 @@ fn setup(
     }
 
     // Team 2
-    for y in -20..20 {
+    for _i in 0..60 {
         let drone_size = Vec2::splat(8.0);
         let position =
             Vec2::new(60.0, 0.0) + Vec2::new(rng.gen_range(-5.0..5.0), rng.gen_range(-20.0..20.0));
@@ -189,6 +193,10 @@ fn setup(
                 MaxHealth { 0: 50.0 },
                 AgentCategory::FIGHTER,
                 Mortal,
+                RetargetBehavior {
+                    interval: 4.0,
+                    remaining_time: 4.0,
+                }
             ))
             .insert_bundle((
                 bevy_combat::combat::tools::Cooldown::new(0.2),
