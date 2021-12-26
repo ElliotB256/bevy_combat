@@ -7,3 +7,4 @@ target/**/*
 !*.wasm
 !*.js
 !target/wasm32-unknown-unknown/release/bevy_combat.d
+**/*.aseprite
