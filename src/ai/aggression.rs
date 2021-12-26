@@ -65,7 +65,7 @@ pub fn do_retargetting(
     )>
 ) {
     for (mut target, mut retarget) in query.iter_mut() {
-        retarget.remaining_time = retarget.remaining_time - dt.0;
+        retarget.remaining_time -= dt.0;
         if retarget.remaining_time < 0.0
         {
             retarget.remaining_time = retarget.interval;
@@ -118,10 +118,10 @@ impl Targetter {
 
         if self.orders.preferred.contains(candidate.category) 
         {
-            score = score / 5.0;
+            score /= 5.0;
         }
         if self.orders.discouraged.contains(candidate.category){
-            score = score * 5.0;
+            score *= 5.0;
         }
 
         if score > self.score{
@@ -164,10 +164,10 @@ pub fn find_targets(
         sorted_targets.insert(
             get_cell_coordinates(position),
             TargetInformation {
-                entity: entity,
+                entity,
                 category: *category,
-                health_fraction: health_fraction, 
-                position: position,
+                health_fraction, 
+                position,
                 team: *team
             }
         );

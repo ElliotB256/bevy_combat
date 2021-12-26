@@ -56,7 +56,7 @@ fn spawn_beams(
         commands
             .spawn()
             .insert(CreateAnimatedEffect {
-                transform: transform,
+                transform,
                 effect: style.effect,
                 parent: None,
             })

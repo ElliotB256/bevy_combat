@@ -56,7 +56,7 @@ pub fn apply_effects (
             (
                 Target { 0: target.0 }, 
                 Instigator { 0: entity },
-                SourceTransform { 0: transform.clone() },
+                SourceTransform { 0: *transform },
                 Effectiveness::default(),
                 Effect
             )

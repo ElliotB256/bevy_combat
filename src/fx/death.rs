@@ -38,7 +38,7 @@ pub fn do_death_effects(
             let y_offset : f32 = rng.gen_range(-6.0..6.0);
             death_effect.time_to_explosion = rng.gen_range(0.05..0.2);
             commands.spawn().insert(CreateAnimatedEffect {
-                effect: death_effect.dying_explosion.clone(),
+                effect: death_effect.dying_explosion,
                 transform: Transform::from_translation(transform.translation + Vec3::new(x_offset, y_offset, 0.1)),
                 parent: None
             });
@@ -57,7 +57,7 @@ pub fn do_death_effects(
 
         if dieing.dead {
             commands.spawn().insert(CreateAnimatedEffect {
-                effect: death_effect.death_explosion.clone(),
+                effect: death_effect.death_explosion,
                 transform: Transform::from_translation(transform.translation),
                 parent: None
             });

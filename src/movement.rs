@@ -53,7 +53,7 @@ fn update_velocity(mut query: Query<(&Speed, &Transform, &mut Velocity)>) {
 
 fn update_translation(dt: Res<GameTimeDelta>, mut query: Query<(&Velocity, &mut Transform)>) {
     for (vel, mut trans) in query.iter_mut() {
-        trans.translation = trans.translation + vel.0 * dt.0;
+        trans.translation += vel.0 * dt.0;
     }
 }
 
