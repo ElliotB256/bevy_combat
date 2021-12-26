@@ -1,3 +1,9 @@
-/bin
-/target/debug
-/target/release
+bin/
+target/**/*
+!target/
+!target/wasm32-unknown-unknown/
+!target/wasm32-unknown-unknown/release
+!*.d
+!*.wasm
+!*.js
+!target/wasm32-unknown-unknown/release/bevy_combat.d
