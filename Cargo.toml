@@ -29,5 +29,5 @@ multimap = "0.8.3"
 opt-level = 1
 
 [profile.release]
-# lto = true
-# opt-level = 's'
+opt-level = 's'
+lto = "thin"
