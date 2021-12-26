@@ -1,6 +1,6 @@
 # bevy_combat
 
-It's a bevy port of the [ECS Combat](https://github.com/ElliotB256/ECSCombat/) I wrote in Unity.
+It's a bevy port of the my [ECS Combat](https://github.com/ElliotB256/ECSCombat/) Unity demo.
 
 You can also try the [web demo](https://elliotb256.github.io/bevy_combat/) in your browser.
 
@@ -20,3 +20,15 @@ You can also try the [web demo](https://elliotb256.github.io/bevy_combat/) in yo
 * Combat calculations
 * Ship shaders
 * Fix bugs
+
+## Getting Started
+
+To build and deploy for web:
+```
+cargo make serve
+```
+
+To run for pc:
+```
+cargo run
+```
