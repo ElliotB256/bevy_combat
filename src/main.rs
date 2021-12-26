@@ -4,12 +4,12 @@ use bevy::{
     prelude::*,
 };
 
-use bevy_combat::{ai::aggression::*, combat::shields::Shield};
 use bevy_combat::ai::{idle::IdleBehavior, movement::TurnToDestinationBehavior, AIPlugin};
 use bevy_combat::combat::{
     mortal::{Health, MaxHealth},
     Target, Team,
 };
+use bevy_combat::{ai::aggression::*, combat::shields::Shield};
 use bevy_combat::{
     combat::mortal::Mortal,
     fx::{animated::AnimatedEffects, death::DeathEffect},
@@ -66,7 +66,8 @@ fn setup(
 
     // Team 1
     for _i in 0..20 {
-        let position = Vec2::new(-20.0, 0.0) + Vec2::new(rng.gen_range(-5.0..5.0), rng.gen_range(-20.0..20.0));
+        let position =
+            Vec2::new(-20.0, 0.0) + Vec2::new(rng.gen_range(-5.0..5.0), rng.gen_range(-20.0..20.0));
         let translation = (position * tile_size).extend(0.0);
         let rotation = Quat::from_rotation_z(rng.gen::<f32>());
         let scale = Vec3::splat(1.0);
@@ -118,7 +119,7 @@ fn setup(
                 RetargetBehavior {
                     interval: 4.0,
                     remaining_time: 4.0,
-                }
+                },
             ))
             .insert_bundle((
                 bevy_combat::combat::tools::Cooldown::new(1.0),
@@ -138,12 +139,10 @@ fn setup(
                 dying_explosion: AnimatedEffects::SmallExplosion,
                 death_explosion: AnimatedEffects::MediumExplosion,
             })
-            .insert(
-                Shield {
-                    health: 100.0,
-                    radius: 32.0
-                }
-            );
+            .insert(Shield {
+                health: 100.0,
+                radius: 32.0,
+            });
     }
 
     // Team 2
@@ -202,7 +201,7 @@ fn setup(
                 RetargetBehavior {
                     interval: 4.0,
                     remaining_time: 4.0,
-                }
+                },
             ))
             .insert_bundle((
                 bevy_combat::combat::tools::Cooldown::new(0.2),
