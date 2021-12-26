@@ -1,6 +1,6 @@
 # bevy_combat
 
-It's a bevy port of the my [ECS Combat](https://github.com/ElliotB256/ECSCombat/) Unity demo.
+It's a bevy port of my [ECS Combat](https://github.com/ElliotB256/ECSCombat/) Unity demo.
 
 You can also try the [web demo](https://elliotb256.github.io/bevy_combat/) in your browser.
 
