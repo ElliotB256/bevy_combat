@@ -1,8 +1,10 @@
 
 
+#[derive(PartialEq, Clone, Copy)]
 pub enum AttackResult {
     Hit,
-    Miss
+    Miss,
+    Blocked
 }
 
 pub struct Attack { 

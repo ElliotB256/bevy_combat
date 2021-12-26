@@ -141,7 +141,7 @@ fn setup(
             .insert(
                 Shield {
                     health: 100.0,
-                    radius: 64.0
+                    radius: 32.0
                 }
             );
     }

@@ -71,9 +71,9 @@ fn setup(
         )),
         0.2),
         shield: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
-            asset_server.load("art/shield.png"),
+            asset_server.load("art/shield2.png"),
             Vec2::new(64.0, 64.0),
-            7,
+            4,
             1,
         )),
         0.05),
@@ -181,9 +181,6 @@ fn create_animated(
             .id();
 
         // if we have a parent add them.
-        //if let Ok(parent) = parent_query.get_component::<Parent>(entity) {
-        //    commands.entity(spawned).insert(parent.clone());
-        //}
         if let Some(parent) = effect.parent {
             commands.entity(parent).push_children(&[spawned]);
         }
