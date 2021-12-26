@@ -22,8 +22,8 @@ pub struct PrintTimer(Timer);
 pub struct Position(Transform);
 
 fn main() {
-    App::build()
-        .add_plugin(LogDiagnosticsPlugin::default())
+    let mut app = App::build();
+        app.add_plugin(LogDiagnosticsPlugin::default())
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
         .add_plugin(BaseGamePlugin)
         .add_plugin(AIPlugin)
@@ -38,8 +38,12 @@ fn main() {
         })
         .add_plugins(DefaultPlugins)
         .add_startup_system(setup.system())
-        .add_system(tick.system().label("Tick"))
-        .run()
+        .add_system(tick.system().label("Tick"));
+        
+        #[cfg(target_arch = "wasm32")]
+        app.add_plugin(bevy_webgl2::WebGL2Plugin);
+
+        app.run()
 }
 
 fn setup(
