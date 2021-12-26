@@ -1,4 +1,4 @@
-use crate::constants::FIXED_TIME_STEP;
+//! Movement and rotation of entities.
 use crate::game::{game_loop_run_criteria, GameTimeDelta};
 use bevy::prelude::*;
 

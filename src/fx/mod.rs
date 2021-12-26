@@ -7,7 +7,7 @@ pub mod beams;
 use bevy::prelude::*;
 use rand::{Rng};
 
-use crate::{combat::{damage::Damage, effects::{EffectLocation, Instigator}, CombatSystems}, game::game_loop_run_criteria};
+use crate::{combat::{effects::{EffectLocation}, CombatSystems}, game::game_loop_run_criteria};
 
 use self::animated::AnimatedEffects;
 
@@ -40,23 +40,5 @@ fn create_hit_effects(
             transform: Transform::from_translation(location.0 + Vec3::new(x_offset, y_offset, 0.1)),
             parent: None
         });
-    }
-}
-
-fn create_muzzle_flares(
-    mut commands: Commands,
-    query: Query<(&Damage, &Instigator)>,
-    in_world_query: Query<&GlobalTransform>
-) {
-    for (_damage, instigator) in query.iter() {
-        let parent = match in_world_query.get(instigator.0) {
-            Ok(_) => Some(instigator.0),
-            Err(_) => None,
-        };
-        commands.spawn().insert(animated::CreateAnimatedEffect {
-            effect: animated::AnimatedEffects::MuzzleFlare,
-            transform: Transform::identity(),
-            parent
-        }).id();
     }
 }
