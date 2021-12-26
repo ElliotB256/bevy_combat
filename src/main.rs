@@ -222,8 +222,6 @@ fn setup(
                 death_explosion: AnimatedEffects::MediumExplosion,
             });
     }
-
-    commands.insert_resource(bevy_combat::game::GameTimeDelta { 0: 1.0 / 60.0 });
 }
 
 fn tick(time: Res<Time>, sprites: Query<&Sprite>, mut query: Query<&mut PrintTimer>) {

@@ -1,6 +1,10 @@
 //! Helper functions for creating fire-and-forget special effect animations like explosions and bullet flares.
 
+use std::time::Duration;
+
 use bevy::prelude::*;
+
+use crate::game::GameTimeDelta;
 
 use super::beams::BeamTracking;
 
@@ -125,7 +129,7 @@ impl AnimatedEffectData {
 
 fn update_animated(
     mut commands: Commands,
-    time: Res<Time>,
+    time: Res<GameTimeDelta>,
     texture_atlases: Res<Assets<TextureAtlas>>,
     mut query: Query<(
         Entity,
@@ -135,7 +139,7 @@ fn update_animated(
     )>,
 ) {
     for (entity, mut timer, mut sprite, texture_atlas_handle) in query.iter_mut() {
-        timer.tick(time.delta());
+        timer.tick(Duration::from_secs_f32(time.0));
         if timer.finished() {
             let texture_atlas = texture_atlases.get(texture_atlas_handle).unwrap();
             if sprite.index as usize == texture_atlas.textures.len() {
