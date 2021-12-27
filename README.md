@@ -10,6 +10,8 @@ You can use the - and = keys to speed up and slow down time (make sure you have 
 
 ![demo scene](media/demo.gif)
 
+![another scene](media/thumbnail.gif)
+
 ## Added so far
 
 * Movement
