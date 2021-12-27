@@ -1,7 +1,6 @@
 [package]
 name = "bevy_combat"
 version = "0.1.0"
-authors = []
 edition = "2018"
 resolver = "2"
 repository = "https://github.com/ElliotB256/bevy_combat"
