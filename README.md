@@ -2,22 +2,23 @@
 
 It's a bevy port of my [ECS Combat](https://github.com/ElliotB256/ECSCombat/) Unity demo.
 
-You can also try the [web demo](https://elliotb256.github.io/bevy_combat/) in your browser.
+Check out the [web demo](https://elliotb256.github.io/bevy_combat/) in your browser.
+You can use the - and = keys to speed up and slow down time (make sure you have focussed the browser window).
 
 ![demo scene](media/demo.gif)
 
 ## Added so far
 
 * Movement
-* AI and targetting
-* Simple weapons (instant hit), damage
-* Death animations
-* Explosions
+* Combat and targetting AI
+* Simple weapons (instant hit), damage, health and mortality
+* Death animations and explosions
+* Shields
 
 ## Coming soon
 
 * More weapons
-* Combat calculations
+* Combat calculations, e.g. weapon effectiveness.
 * Ship shaders
 * Fix bugs
 
@@ -32,3 +33,7 @@ To run for pc:
 ```
 cargo run
 ```
+
+## Credits
+
+Credit for individual art assets can be found [here](assets/credits.md).
