@@ -8,7 +8,7 @@ homepage = "https://github.com/ElliotB256/bevy_combat"
 description = "A sci-fi battle simulation implemented in the bevy engine."
 readme = "README.md"
 keywords = ["ecs", "bevy", "scifi", "simulation", "battle"]
-license = "MIT License"
+license = "MIT"
 authors = ["ElliotB256 <7041164+ElliotB256@users.noreply.github.com>"]
 
 [dependencies]
