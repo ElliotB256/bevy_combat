@@ -1,4 +1,7 @@
-# bevy_combat
+# Bevy Combat
+
+[![crate_version](https://img.shields.io/crates/v/bevy_combat.svg?style=flat)](https://crates.io/crates/bevy_combat)
+[![crate_version](https://img.shields.io/badge/docs-latest-blue.svg?style=flat)](https://docs.rs/bevy_combat)
 
 It's a bevy port of my [ECS Combat](https://github.com/ElliotB256/ECSCombat/) Unity demo.
 
@@ -6,6 +9,8 @@ Check out the [web demo](https://elliotb256.github.io/bevy_combat/) in your brow
 You can use the - and = keys to speed up and slow down time (make sure you have focussed the browser window).
 
 ![demo scene](media/demo.gif)
+
+![another scene](media/thumbnail.gif)
 
 ## Added so far
 
