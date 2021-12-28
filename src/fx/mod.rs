@@ -7,7 +7,7 @@ pub mod beams;
 use bevy::prelude::*;
 use rand::{Rng};
 
-use crate::{combat::{effects::{EffectLocation}, CombatSystems}, game::game_loop_run_criteria};
+use crate::{combat::{effects::{EffectLocation}, CombatSystems, attack::{Attack, AttackResult}}, game::game_loop_run_criteria};
 
 use self::animated::AnimatedEffects;
 
@@ -28,11 +28,16 @@ impl Plugin for EffectsPlugin {
 
 fn create_hit_effects(
     mut commands: Commands,
-    query: Query<(&HitEffect, &EffectLocation)>,
+    query: Query<(&HitEffect, &EffectLocation, &Attack)>,
 ) {
     let mut rng = rand::thread_rng();
 
-    for (effect, location) in query.iter() {
+    for (effect, location, attack) in query.iter() {
+
+        if attack.result == AttackResult::Miss {
+            continue;
+        }
+
         let x_offset : f32 = rng.gen_range(-6.0..6.0);
         let y_offset : f32 = rng.gen_range(-6.0..6.0);
         commands.spawn().insert(animated::CreateAnimatedEffect {

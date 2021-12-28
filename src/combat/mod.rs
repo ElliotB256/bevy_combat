@@ -8,6 +8,7 @@ pub mod effects;
 pub mod mortal;
 pub mod shields;
 pub mod tools;
+pub mod evasion;
 
 #[derive(Clone, Copy)]
 pub struct Target(pub Option<Entity>);
@@ -53,10 +54,22 @@ impl Plugin for CombatPlugin {
                         .label(effects::EffectSystems::ApplyEffects),
                 )
                 .with_system(
+                    evasion::calculate_evasion_ratings
+                        .system()
+                        .label(evasion::EvasionSystems::CalculateEvasionRatings)
+                )
+                .with_system(
+                    evasion::determine_missed_attacks
+                        .system()
+                        .label(evasion::EvasionSystems::DetermineMissedAttacks)
+                        .after(evasion::EvasionSystems::CalculateEvasionRatings)
+                        .after(effects::EffectSystems::ApplyEffects)
+                )
+                .with_system(
                     shields::shield_absorb_damage
                         .system()
                         .label(shields::ShieldSystems::AbsorbDamage)
-                        .after(effects::EffectSystems::ApplyEffects),
+                        .after(evasion::EvasionSystems::DetermineMissedAttacks),
                 )
                 .with_system(
                     damage::apply_damage

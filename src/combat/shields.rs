@@ -41,6 +41,12 @@ pub fn shield_absorb_damage(
         if target.0.is_none() {
             continue;
         }
+
+        // non hit attacks cannot be shielded
+        if attack.result != AttackResult::Hit {
+            continue;
+        }
+
         if let Ok((mut shield, shield_transform)) =
             shields_query.get_mut(target.0.expect("target is none"))
         {
