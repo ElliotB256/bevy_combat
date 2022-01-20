@@ -23,7 +23,7 @@ pub enum AISystems {
 }
 
 impl Plugin for AIPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app
         .add_system_to_stage(
             CoreStage::Update,

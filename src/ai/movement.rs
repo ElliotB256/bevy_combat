@@ -8,12 +8,12 @@ use crate::movement::{Heading, MaxTurnSpeed, TurnSpeed};
 use bevy::prelude::*;
 
 /// Indicates that an entity should turn towards a destination.
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct TurnToDestinationBehavior {
     pub destination: Vec3,
 }
 
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct PursueBehavior;
 pub const PROXIMITY_RADIUS: f32 = 64.0;
 
@@ -91,6 +91,7 @@ pub fn pursue(
 /// A 'peel' manoeuvre causes an entity to move away from its target.
 /// 
 /// It is usually triggered when the entity gets too close.
+#[derive(Component)]
 pub struct PeelManoeuvreBehavior;
 const ENGAGEMENT_RADIUS: f32 = 128.0;
 

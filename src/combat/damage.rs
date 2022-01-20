@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use super::{effects::Effect, mortal::Health, Target, attack::{Attack, AttackResult}};
 
 /// Entity will deal a specified amount of damage.
+#[derive(Component)]
 pub struct Damage(pub f32);
 
 impl Damage {

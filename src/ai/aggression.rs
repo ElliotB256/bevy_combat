@@ -3,7 +3,7 @@ use bitflags::bitflags;
 use crate::{game::GameTimeDelta, combat::Target};
 
 bitflags! {
-    #[derive(Default)]
+    #[derive(Default, Component)]
     pub struct AgentCategory: u32 {
         const FIGHTER = 0b00000001;
         const FRIGATE = 0b00000010;
@@ -13,9 +13,13 @@ bitflags! {
     }
 }
 
+#[derive(Component)]
 pub struct AggroRadius(pub f32);
-#[derive(Default)]
+
+#[derive(Default, Component)]
 pub struct AggroLocation(pub Vec3);
+
+#[derive(Component)]
 pub struct RetargetBehavior {
     pub interval: f32,
     pub remaining_time: f32
@@ -23,13 +27,14 @@ pub struct RetargetBehavior {
 
 pub const MAX_AGGRO_RADIUS : f32 = 1000.0;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Component)]
 pub struct TargetingOrders {
     pub preferred: AgentCategory,
     pub discouraged: AgentCategory,
     pub target_same_team: bool
 }
 
+#[derive(Component)]
 pub struct GuardBehavior {
     pub protected: Entity
 }

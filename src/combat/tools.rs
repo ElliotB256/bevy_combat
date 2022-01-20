@@ -5,6 +5,7 @@ use super::Target;
 use crate::game::GameTimeDelta;
 
 /// A tool that applies an effect to a target
+#[derive(Component)]
 pub struct TargettedTool {
     /// The targetting angular cone of the tool in radians.
     pub cone: f32,
@@ -17,6 +18,7 @@ pub struct TargettedTool {
 }
 
 /// Cooldown timer for a tool.
+#[derive(Component)]
 pub struct Cooldown {
     /// Time remaining on the cooldown.
     pub remaining: f32,

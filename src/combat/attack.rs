@@ -1,4 +1,5 @@
 
+use bevy::prelude::*;
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum AttackResult {
@@ -7,6 +8,7 @@ pub enum AttackResult {
     Blocked
 }
 
+#[derive(Component)]
 pub struct Attack { 
     pub accuracy: f32,
     pub result: AttackResult,

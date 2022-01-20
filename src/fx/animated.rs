@@ -90,18 +90,28 @@ fn setup(
 pub struct AnimatedEffectsPlugin;
 
 impl Plugin for AnimatedEffectsPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.add_system(create_animated.system());
         app.add_system(update_animated.system());
         app.add_startup_system(setup.system());
     }
 }
 
-/// Component that indicates an explosion should be created at the location of the entity.
+#[derive(Component)]
 pub struct CreateAnimatedEffect {
     pub transform: Transform,
     pub effect: AnimatedEffects,
     pub parent: Option<Entity>
+}
+
+#[derive(Component)]
+pub struct AnimatedEffect {
+    pub finished: bool
+}
+impl AnimatedEffect {
+    pub fn new() -> Self {
+        AnimatedEffect { finished: false }
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -135,19 +145,24 @@ fn update_animated(
         Entity,
         &mut Timer,
         &mut TextureAtlasSprite,
+        &mut AnimatedEffect,
         &Handle<TextureAtlas>,
     )>,
 ) {
-    for (entity, mut timer, mut sprite, texture_atlas_handle) in query.iter_mut() {
+    for (entity, mut timer, mut sprite, mut effect, texture_atlas_handle) in query.iter_mut() {
         timer.tick(Duration::from_secs_f32(time.0));
         if timer.finished() {
             let texture_atlas = texture_atlases.get(texture_atlas_handle).unwrap();
-            if sprite.index as usize == texture_atlas.textures.len() {
-                // if we are at the final frame, delete the explosion
+
+            if effect.finished {
                 commands.entity(entity).despawn_recursive();
-            } else {
-                // Otherwise advance the explosion frames.
+            }
+
+            if sprite.index < texture_atlas.textures.len() - 1 {
+                //advance the frames.
                 sprite.index += 1;
+            } else {
+                effect.finished = true;
             }
         }
     }
@@ -182,6 +197,7 @@ fn create_animated(
                 ..Default::default()
             })
             .insert(Timer::from_seconds(prefab.frame_time, true))
+            .insert(AnimatedEffect::new())
             .id();
 
         // if we have a parent add them.

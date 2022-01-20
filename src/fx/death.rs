@@ -15,6 +15,7 @@ use super::animated::{AnimatedEffects, CreateAnimatedEffect};
 // }
 
 /// Generates effects while the entity is dieing.
+#[derive(Component)]
 pub struct DeathEffect {
     /// Remaining time to wait until launching another explosion.
     pub time_to_explosion: f32,

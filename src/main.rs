@@ -18,11 +18,13 @@ use bevy_combat::{
 };
 use rand::Rng;
 
+#[derive(Component)]
 pub struct PrintTimer(Timer);
+#[derive(Component)]
 pub struct Position(Transform);
 
 fn main() {
-    let mut app = App::build();
+    let mut app = App::new();
         app.add_plugin(LogDiagnosticsPlugin::default())
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
         .add_plugin(BaseGamePlugin)
@@ -39,9 +41,6 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_startup_system(setup.system())
         .add_system(tick.system().label("Tick"));
-        
-        #[cfg(target_arch = "wasm32")]
-        app.add_plugin(bevy_webgl2::WebGL2Plugin);
 
         app.run()
 }
@@ -49,14 +48,12 @@ fn main() {
 fn setup(
     mut commands: Commands,
     assets: Res<AssetServer>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let mut rng = rand::thread_rng();
 
     let tile_size = Vec2::splat(16.0);
-
-    let sprite_handle = materials.add(assets.load("art/smallship.png").into());
-    let drones = materials.add(assets.load("art/drone.png").into());
+    let sprite_handle = assets.load("art/smallship.png");
+    let drones = assets.load("art/drone.png");
 
     commands
         .spawn()
@@ -74,18 +71,17 @@ fn setup(
             Vec2::new(-20.0, 0.0) + Vec2::new(rng.gen_range(-5.0..5.0), rng.gen_range(-20.0..20.0));
         let translation = (position * tile_size).extend(0.0);
         let rotation = Quat::from_rotation_z(rng.gen::<f32>());
-        let scale = Vec3::splat(1.0);
+        let scale = Vec3::splat(0.5);
 
         commands
             .spawn()
             .insert_bundle(SpriteBundle {
-                material: sprite_handle.clone(),
+                texture: sprite_handle.clone(),
                 transform: Transform {
                     translation,
                     rotation,
                     scale,
                 },
-                sprite: Sprite::new(tile_size),
                 ..Default::default()
             })
             .insert_bundle(MovementBundle {
@@ -157,18 +153,17 @@ fn setup(
             Vec2::new(60.0, 0.0) + Vec2::new(rng.gen_range(-5.0..5.0), rng.gen_range(-20.0..20.0));
         let translation = (position * drone_size).extend(0.0);
         let rotation = Quat::from_rotation_z(rng.gen::<f32>());
-        let scale = Vec3::splat(1.0);
+        let scale = Vec3::splat(0.5);
 
         commands
             .spawn()
             .insert_bundle(SpriteBundle {
-                material: drones.clone(),
+                texture: drones.clone(),
                 transform: Transform {
                     translation,
                     rotation,
                     scale,
                 },
-                sprite: Sprite::new(drone_size),
                 ..Default::default()
             })
             .insert_bundle(MovementBundle {

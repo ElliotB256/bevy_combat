@@ -2,24 +2,26 @@
 use crate::game::{game_loop_run_criteria, GameTimeDelta};
 use bevy::prelude::*;
 
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct Velocity(pub Vec3);
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct MaxSpeed(pub f32);
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct Speed(pub f32);
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct MaxTurnSpeed {
     pub radians_per_second: f32,
 }
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct TurnSpeed {
     pub radians_per_second: f32,
 }
+#[derive(Component)]
 pub struct Mass(pub f32);
+#[derive(Component)]
 pub struct Thrust(pub f32);
 
-#[derive(Default)]
+#[derive(Default, Component)]
 /// Direction the entity is facing. Readonly.
 pub struct Heading {
     pub radians: f32,
@@ -102,7 +104,7 @@ pub enum MovementSystems {
 pub struct MovementPlugin;
 
 impl Plugin for MovementPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.add_system_set(
             SystemSet::new()
                 .label(MovementSystems::Set)

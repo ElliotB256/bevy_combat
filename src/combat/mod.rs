@@ -10,7 +10,7 @@ pub mod shields;
 pub mod tools;
 pub mod evasion;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Component)]
 pub struct Target(pub Option<Entity>);
 
 impl Default for Target {
@@ -20,7 +20,7 @@ impl Default for Target {
 }
 
 /// The team an entity is assigned to.
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq, Component)]
 pub struct Team(pub i32);
 
 #[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
@@ -28,11 +28,11 @@ pub enum CombatSystems {
     Set,
 }
 
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct CombatPlugin;
 
 impl Plugin for CombatPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.add_system_set_to_stage(
             CoreStage::Update,
             SystemSet::new()

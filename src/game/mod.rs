@@ -17,7 +17,7 @@ pub static DESPAWN_STAGE: &str = "despawn_stage";
 pub struct BaseGamePlugin;
 
 impl Plugin for BaseGamePlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.add_stage_after(
             CoreStage::Update,
             DESPAWN_STAGE,

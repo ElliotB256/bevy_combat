@@ -1,10 +1,12 @@
 use bevy::prelude::*;
 use super::movement::TurnToDestinationBehavior;
+#[derive(Component)]
 pub struct IdleBehavior;
 use rand::Rng;
 use crate::combat::Target;
 use crate::ai::movement::PursueBehavior;
 
+#[derive(Component)]
 pub struct RoamBehavior {
     pub centre: Vec3,
     pub radius: f32
