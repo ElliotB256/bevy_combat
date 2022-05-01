@@ -23,26 +23,23 @@ pub enum AISystems {
 }
 
 impl Plugin for AIPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app
         .add_system_to_stage(
             CoreStage::Update,
             movement::peel_manoeuvre
-                .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .label(AISystems::PeelManoeuvre)
         )
         .add_system_to_stage(
             CoreStage::Update,
             movement::pursue
-                .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .label(AISystems::Pursue)
         )
         .add_system_to_stage(
             CoreStage::Update,
             movement::turn_to_destination
-                .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .label(AISystems::TurnToDestination)
                 .after(crate::movement::MovementSystems::UpdateHeading)
@@ -51,7 +48,6 @@ impl Plugin for AIPlugin {
         .add_system_to_stage(
             CoreStage::Update,
             idle::do_roaming
-                .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .label(AISystems::DoRoaming)
         )
@@ -60,21 +56,18 @@ impl Plugin for AIPlugin {
         app.add_system_to_stage(
             CoreStage::Update,
             aggression::update_aggression_source
-                .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .label(AISystems::UpdateAggressionSource)
         )
         .add_system_to_stage(
             CoreStage::Update,
             aggression::do_retargetting
-                .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .label(AISystems::DoRetargetting)
         )
         .add_system_to_stage(
             CoreStage::Update,
             aggression::find_targets
-                .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .label(AISystems::FindTargets)
                 .after(AISystems::UpdateAggressionSource)
@@ -83,7 +76,6 @@ impl Plugin for AIPlugin {
         app.add_system_to_stage(
             CoreStage::Update,
             idle::idle_to_combat
-                .system()
                 .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
                 .label(AISystems::IdleToCombat)
         );

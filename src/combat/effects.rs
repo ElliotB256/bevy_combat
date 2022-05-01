@@ -5,15 +5,19 @@ use bevy::{prelude::*};
 use super::{Target, tools::TargettedTool};
 
 /// Transform of the effect source.
+#[derive(Component)]
 pub struct SourceTransform(pub GlobalTransform);
 
 /// The location where an effect is applied.
+#[derive(Component)]
 pub struct EffectLocation(pub Vec3);
 
 /// The entity responsible for causing an effect.
+#[derive(Component)]
 pub struct Instigator(pub Entity);
 
 /// The effectiveness of an effect. Effects start with an effectiveness of 1.0
+#[derive(Component)]
 pub struct Effectiveness(pub f32);
 
 impl Default for Effectiveness {
@@ -24,10 +28,12 @@ impl Default for Effectiveness {
 
 type Spawner = fn(&mut Commands) -> Entity;
 
+#[derive(Component)]
 pub struct Effector {
     pub spawn_effect: Spawner
 }
 
+#[derive(Component)]
 pub struct Effect;
 
 pub fn apply_effects (

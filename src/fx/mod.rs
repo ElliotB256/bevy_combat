@@ -12,6 +12,7 @@ use crate::{combat::{effects::{EffectLocation}, CombatSystems, attack::{Attack, 
 use self::animated::AnimatedEffects;
 
 /// An effect that spawns when an effect hits a target.
+#[derive(Component)]
 pub struct HitEffect {
     pub effect: AnimatedEffects
 }
@@ -19,10 +20,10 @@ pub struct HitEffect {
 pub struct EffectsPlugin;
 
 impl Plugin for EffectsPlugin {
-    fn build(&self, app: &mut AppBuilder) {
-        app.add_system(create_hit_effects.system().after(CombatSystems::Set));
-        //app.add_system(create_muzzle_flares.system());
-        app.add_system(death::do_death_effects.system().after(crate::combat::mortal::MortalSystems::UpdateDieing).with_run_criteria(game_loop_run_criteria()));
+    fn build(&self, app: &mut App) {
+        app.add_system(create_hit_effects.after(CombatSystems::Set));
+        //app.add_system(create_muzzle_flares);
+        app.add_system(death::do_death_effects.after(crate::combat::mortal::MortalSystems::UpdateDieing).with_run_criteria(game_loop_run_criteria()));
     }
 }
 

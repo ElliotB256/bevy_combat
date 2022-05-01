@@ -18,14 +18,14 @@ pub enum BeamSystems {
 pub struct BeamEffectPlugin;
 
 impl Plugin for BeamEffectPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.add_system_set_to_stage(
             CoreStage::Update,
             SystemSet::new()
                 .label(BeamSystems::Set)
                 .after(CombatSystems::Set)
-                .with_system(spawn_beams.system())
-                .with_system(beams_track_target.system()),
+                .with_system(spawn_beams)
+                .with_system(beams_track_target),
         );
     }
 }
@@ -34,6 +34,9 @@ fn get_transform(start: Vec3, end: Vec3, width: f32) -> Transform {
     let delta = end - start;
     let angle = delta.y.atan2(delta.x) + std::f32::consts::FRAC_PI_2;
     let scale = Vec3::new(width, delta.length() / 4.0, 1.0);
+
+    //Transform::from_rotation(Quat::from_rotation_z(angle)) * Transform::from_scale(Vec3::splat(30.0))
+    // Transform::from_rotation(Quat::from_rotation_z(angle)) * Transform::from_scale(Vec3::new(3.0, 100.0, 1.0))
 
     Transform::from_translation((end + start) / 2.0)
         * Transform::from_rotation(Quat::from_rotation_z(angle))
@@ -88,12 +91,13 @@ fn beams_track_target(
     }
 }
 
+#[derive(Component)]
 pub struct BeamStyle {
     pub effect: AnimatedEffects,
     pub width: f32,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Component)]
 pub struct BeamTracking {
     pub target: Entity,
     pub source: Entity,

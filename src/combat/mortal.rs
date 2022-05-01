@@ -5,15 +5,19 @@ use rand::Rng;
 
 use crate::game::GameTimeDelta;
 
+#[derive(Component)]
 pub struct Health(pub f32);
+#[derive(Component)]
 pub struct MaxHealth(pub f32);
 
 /// Marks that an entity can die.
+#[derive(Component)]
 pub struct Mortal;
 
 /// Indicates that an entity is in the process of dying.
 /// 
 /// This entity is doomed - there is no saving it. Call this the 'death throes' if you will.
+#[derive(Component)]
 pub struct Dieing {
     pub remaining_time: f32,
     pub dead: bool,

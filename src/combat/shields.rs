@@ -11,7 +11,9 @@ use super::{
     Target,
 };
 
+#[derive(Component)]
 pub struct MaxShieldHP(pub f32);
+#[derive(Component)]
 pub struct Shield {
     pub health: f32,
     pub radius: f32,

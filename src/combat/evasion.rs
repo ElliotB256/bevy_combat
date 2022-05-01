@@ -16,6 +16,7 @@ pub enum EvasionSystems {
 }
 
 /// An entity can evade incoming attacks.
+#[derive(Component)]
 pub struct Evasion {
     /// The base evasion rating for an entity.
     pub base: f32,
