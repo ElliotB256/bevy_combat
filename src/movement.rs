@@ -109,39 +109,24 @@ impl Plugin for MovementPlugin {
             SystemSet::new()
                 .label(MovementSystems::Set)
                 .with_run_criteria(game_loop_run_criteria())
-                .with_system(
-                    update_heading
-                        .system()
-                        .label(MovementSystems::UpdateHeading),
-                )
-                .with_system(
-                    calculate_max_speed
-                        .system()
-                        .label(MovementSystems::CalculateMaxSpeed),
-                )
+                .with_system(update_heading.label(MovementSystems::UpdateHeading))
+                .with_system(calculate_max_speed.label(MovementSystems::CalculateMaxSpeed))
                 .with_system(
                     calculate_speed
-                        .system()
                         .label(MovementSystems::CalculateSpeed)
                         .after(MovementSystems::CalculateMaxSpeed),
                 )
                 .with_system(
                     update_rotation
-                        .system()
                         .label(MovementSystems::UpdateRotation)
                         .after(MovementSystems::UpdateHeading),
                 )
                 .with_system(
                     update_velocity
-                        .system()
                         .label(MovementSystems::UpdateVelocity)
                         .after(MovementSystems::UpdateRotation),
                 )
-                .with_system(
-                    update_translation
-                        .system()
-                        .after(MovementSystems::UpdateVelocity),
-                ),
+                .with_system(update_translation.after(MovementSystems::UpdateVelocity)),
         );
     }
 }

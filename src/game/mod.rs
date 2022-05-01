@@ -23,8 +23,8 @@ impl Plugin for BaseGamePlugin {
             DESPAWN_STAGE,
             SystemStage::single_threaded(),
         );
-        app.add_startup_system(startup.system());
-        app.add_system(control_game_speed.system());
+        app.add_startup_system(startup);
+        app.add_system(control_game_speed);
     }
 }
 

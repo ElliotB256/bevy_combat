@@ -91,9 +91,9 @@ pub struct AnimatedEffectsPlugin;
 
 impl Plugin for AnimatedEffectsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(create_animated.system());
-        app.add_system(update_animated.system());
-        app.add_startup_system(setup.system());
+        app.add_system(create_animated);
+        app.add_system(update_animated);
+        app.add_startup_system(setup);
     }
 }
 
@@ -137,13 +137,16 @@ impl AnimatedEffectData {
     }
 }
 
+#[derive(Component, Deref, DerefMut)]
+pub struct AnimationTimer(pub Timer);
+
 fn update_animated(
     mut commands: Commands,
     time: Res<GameTimeDelta>,
     texture_atlases: Res<Assets<TextureAtlas>>,
     mut query: Query<(
         Entity,
-        &mut Timer,
+        &mut AnimationTimer,
         &mut TextureAtlasSprite,
         &mut AnimatedEffect,
         &Handle<TextureAtlas>,
@@ -196,7 +199,7 @@ fn create_animated(
                 transform: effect.transform,
                 ..Default::default()
             })
-            .insert(Timer::from_seconds(prefab.frame_time, true))
+            .insert(AnimationTimer { 0: Timer::from_seconds(prefab.frame_time, true) })
             .insert(AnimatedEffect::new())
             .id();
 

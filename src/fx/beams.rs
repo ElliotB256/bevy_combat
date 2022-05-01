@@ -24,8 +24,8 @@ impl Plugin for BeamEffectPlugin {
             SystemSet::new()
                 .label(BeamSystems::Set)
                 .after(CombatSystems::Set)
-                .with_system(spawn_beams.system())
-                .with_system(beams_track_target.system()),
+                .with_system(spawn_beams)
+                .with_system(beams_track_target),
         );
     }
 }
@@ -36,11 +36,11 @@ fn get_transform(start: Vec3, end: Vec3, width: f32) -> Transform {
     let scale = Vec3::new(width, delta.length() / 4.0, 1.0);
 
     //Transform::from_rotation(Quat::from_rotation_z(angle)) * Transform::from_scale(Vec3::splat(30.0))
-    Transform::from_rotation(Quat::from_rotation_z(angle)) * Transform::from_scale(Vec3::new(3.0, 100.0, 1.0))
+    // Transform::from_rotation(Quat::from_rotation_z(angle)) * Transform::from_scale(Vec3::new(3.0, 100.0, 1.0))
 
-    // Transform::from_translation((end + start) / 2.0)
-    //     * Transform::from_rotation(Quat::from_rotation_z(angle))
-    //     * Transform::from_scale(scale)
+    Transform::from_translation((end + start) / 2.0)
+        * Transform::from_rotation(Quat::from_rotation_z(angle))
+        * Transform::from_scale(scale)
 }
 
 fn spawn_beams(

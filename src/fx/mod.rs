@@ -21,9 +21,9 @@ pub struct EffectsPlugin;
 
 impl Plugin for EffectsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(create_hit_effects.system().after(CombatSystems::Set));
-        //app.add_system(create_muzzle_flares.system());
-        app.add_system(death::do_death_effects.system().after(crate::combat::mortal::MortalSystems::UpdateDieing).with_run_criteria(game_loop_run_criteria()));
+        app.add_system(create_hit_effects.after(CombatSystems::Set));
+        //app.add_system(create_muzzle_flares);
+        app.add_system(death::do_death_effects.after(crate::combat::mortal::MortalSystems::UpdateDieing).with_run_criteria(game_loop_run_criteria()));
     }
 }
 

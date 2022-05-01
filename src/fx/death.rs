@@ -10,7 +10,7 @@ use super::animated::{AnimatedEffects, CreateAnimatedEffect};
 //pub struct DeathEffectsPlugin;
 // impl Plugin for DeathEffectsPlugin {
 //     fn build(&self, app: &mut AppBuilder) {
-//         app.add_system(do_death_effects.system().with_run_criteria(game_loop_run_criteria()));
+//         app.add_system(do_death_effects.with_run_criteria(game_loop_run_criteria()));
 //     }
 // }
 
