@@ -3,6 +3,7 @@
 pub mod animated;
 pub mod death;
 pub mod beams;
+pub mod damage_flash;
 
 use bevy::prelude::*;
 use rand::{Rng};
@@ -24,6 +25,7 @@ impl Plugin for EffectsPlugin {
         app.add_system(create_hit_effects.after(CombatSystems::Set));
         //app.add_system(create_muzzle_flares);
         app.add_system(death::do_death_effects.after(crate::combat::mortal::MortalSystems::UpdateDieing).with_run_criteria(game_loop_run_criteria()));
+        app.add_system(damage_flash::update_damage_flashes.with_run_criteria(game_loop_run_criteria()));
     }
 }
 

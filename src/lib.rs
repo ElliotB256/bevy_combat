@@ -6,3 +6,4 @@ pub mod movement;
 pub mod game;
 pub mod templates;
 pub mod fx;
+pub mod materials;
