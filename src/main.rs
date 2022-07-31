@@ -56,7 +56,7 @@ fn setup(
 
     commands
         .spawn()
-        .insert_bundle(OrthographicCameraBundle::new_2d())
+        .insert_bundle(Camera2dBundle::default())
         .insert(PrintTimer(Timer::from_seconds(1.0, true)))
         .insert(Position(Transform::from_translation(Vec3::new(
             0.0, 0.0, 1000.0,

@@ -55,7 +55,7 @@ fn spawn_beams(
     )>,
 ) {
     for (style, source, effect, target, instigator, attack) in query.iter() {
-        let transform = get_transform(source.0.translation, effect.0, style.width);
+        let transform = get_transform(source.0.translation(), effect.0, style.width);
         commands
             .spawn()
             .insert(CreateAnimatedEffect {
@@ -66,7 +66,7 @@ fn spawn_beams(
             .insert(BeamTracking {
                 target: target.0.expect("no target"),
                 source: instigator.0,
-                start: source.0.translation,
+                start: source.0.translation(),
                 end: effect.0,
                 width: style.width,
                 track_target: attack.result == AttackResult::Hit,
@@ -80,11 +80,11 @@ fn beams_track_target(
 ) {
     for (mut tracking, mut transform) in query.iter_mut() {
         if let Ok(start_t) = world_query.get_component::<GlobalTransform>(tracking.source) {
-            tracking.start = start_t.translation;
+            tracking.start = start_t.translation();
         }
         if tracking.track_target {
             if let Ok(end_t) = world_query.get_component::<GlobalTransform>(tracking.target) {
-                tracking.end = end_t.translation;
+                tracking.end = end_t.translation();
             }
         }
         *transform = get_transform(tracking.start, tracking.end, tracking.width);

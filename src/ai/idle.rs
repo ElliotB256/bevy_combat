@@ -23,7 +23,7 @@ pub fn do_roaming(mut query: Query<(
 
     for (transform, roam, mut turn_to_destination) in query.iter_mut() {
 
-        let delta = turn_to_destination.destination - transform.translation;
+        let delta = turn_to_destination.destination - transform.translation();
         
         if delta.length_squared() > ARRIVAL_TOLERANCE * ARRIVAL_TOLERANCE {
             let radius = rng.gen_range(0.0..roam.radius);

@@ -1,4 +1,4 @@
-use bevy::core::FixedTimestep;
+use bevy::time::FixedTimestep;
 use bevy::input::{keyboard::KeyCode, Input};
 use bevy::prelude::*;
 

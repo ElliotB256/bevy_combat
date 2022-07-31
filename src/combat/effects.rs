@@ -70,7 +70,7 @@ pub fn apply_effects (
 
         if let Ok(target_transform) = pos_query.get_component::<GlobalTransform>(target.0.expect("target is none")) {
             commands.entity(spawned).insert(
-                EffectLocation { 0: target_transform.translation }
+                EffectLocation { 0: target_transform.translation() }
             );
         }
         

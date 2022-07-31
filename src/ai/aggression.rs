@@ -53,12 +53,12 @@ pub fn update_aggression_source(
     for (guard, mut aggro_loc) in guards_query.iter_mut() {
         match pos_query.get(guard.protected) {
             Err(_) => { continue },
-            Ok(other_transform) => { aggro_loc.0 = other_transform.translation }
+            Ok(other_transform) => { aggro_loc.0 = other_transform.translation() }
         }
     }
 
     for (transform, mut aggro_loc) in solo_query.iter_mut() {
-        aggro_loc.0 = transform.translation
+        aggro_loc.0 = transform.translation()
     }
 }
 
@@ -165,7 +165,7 @@ pub fn find_targets(
     // Sort valid targets by position into a hashmap.
     for (entity, transform, team, category, health, max_health) in target_query.iter() {
         let health_fraction = health.0 / max_health.0;
-        let position = transform.translation;
+        let position = transform.translation();
         sorted_targets.insert(
             get_cell_coordinates(position),
             TargetInformation {

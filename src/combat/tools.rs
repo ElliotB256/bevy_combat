@@ -74,7 +74,7 @@ pub fn fire_targetted_tools(
         match pos_query.get_component::<GlobalTransform>(target.0.expect("target is None")) {
             Err(_) => { continue },
             Ok(target_transform) => {
-                let delta = target_transform.translation - transform.translation;
+                let delta = target_transform.translation() - transform.translation();
 
                 // Cannot fire if out of weapon range
                 if delta.length_squared() > tool.range * tool.range {
@@ -82,7 +82,7 @@ pub fn fire_targetted_tools(
                 }
 
                 // Only fire when target is within weapon cone.
-                let projection = delta.normalize().dot(transform.local_y().normalize());
+                let projection = delta.normalize().dot(transform.up().normalize());
                 if projection < (tool.cone / 2.0).cos() {
                     continue;
                 }

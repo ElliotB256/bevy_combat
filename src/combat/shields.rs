@@ -53,7 +53,7 @@ pub fn shield_absorb_damage(
             shields_query.get_mut(target.0.expect("target is none"))
         {
             // if attack from within shield radius, no protection given:
-            let delta = source_t.0.translation - hit_loc.0;
+            let delta = source_t.0.translation() - hit_loc.0;
             if delta.length_squared() < shield.radius.powi(2) {
                 continue;
             }
@@ -69,7 +69,7 @@ pub fn shield_absorb_damage(
 
                 // spawn a 'hit shield' effect
                 commands.spawn().insert(CreateAnimatedEffect {
-                    transform: Transform::from_translation(shield_transform.translation)
+                    transform: Transform::from_translation(shield_transform.translation())
                         * Transform::from_rotation(Quat::from_rotation_z(
                             delta.y.atan2(delta.x) - std::f32::consts::FRAC_PI_2,
                         ))

@@ -29,7 +29,7 @@ pub fn turn_to_destination(
 ) {
     for (behavior, transform, max_turn_speed, heading, mut turn_speed) in query.iter_mut() {
         // // Determine desired heading to target
-        let delta = behavior.destination - transform.translation;
+        let delta = behavior.destination - transform.translation();
         let desired_heading = get_heading_to_point(delta);
 
         // Adjust rotation speed to aim for desired heading.
@@ -71,10 +71,10 @@ pub fn pursue(
                 continue;
             }
             Ok(target_transform) => {
-                turn_to.destination = target_transform.translation;
+                turn_to.destination = target_transform.translation();
                 
                 // if too close to target, evasive manoeuvre
-                let delta = target_transform.translation - transform.translation;
+                let delta = target_transform.translation() - transform.translation();
                 //println!("entity: {:?}, destination: {:?}, delta: {:?}.", target.0.expect("target"), turn_to.destination, delta);
                 if delta.length_squared() < PROXIMITY_RADIUS * PROXIMITY_RADIUS {
                     commands
@@ -125,7 +125,7 @@ pub fn peel_manoeuvre(
             }
             Ok(target_transform) => {
                 // Turn away from the enemy.
-                let mut delta = target_transform.translation - transform.translation;
+                let mut delta = target_transform.translation() - transform.translation();
                 delta.z = 0.0;
                 let angle_diff = get_angle_difference(get_heading_to_point(delta), heading.radians);
 

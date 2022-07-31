@@ -1,6 +1,7 @@
 //! Module for implementing NPC artificial intelligence.
 
-use bevy::{core::FixedTimestep, prelude::*};
+use bevy::prelude::*;
+use bevy::time::FixedTimestep;
 use crate::constants::FIXED_TIME_STEP;
 
 pub mod movement;
