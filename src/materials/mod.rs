@@ -5,7 +5,7 @@ use bevy::{
     sprite::Material2d
 };
 
-#[derive(AsBindGroup, TypeUuid, Clone)]
+#[derive(AsBindGroup, TypeUuid, Clone, Asset, TypePath)]
 #[uuid = "0e307091-2db9-40e7-ae85-cd890941101d"]
 pub struct ShipMaterial {
     #[uniform(0)]

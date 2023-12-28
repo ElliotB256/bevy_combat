@@ -10,22 +10,13 @@ use crate::combat::{
 
 use super::animated::{AnimatedEffects, CreateAnimatedEffect};
 
-#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
-pub enum BeamSystems {
-    Set,
-}
-
 pub struct BeamEffectPlugin;
 
 impl Plugin for BeamEffectPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set_to_stage(
-            CoreStage::Update,
-            SystemSet::new()
-                .label(BeamSystems::Set)
-                .after(CombatSystems::Set)
-                .with_system(spawn_beams)
-                .with_system(beams_track_target),
+        app.add_systems(
+            FixedUpdate,
+            (spawn_beams, beams_track_target).after(CombatSystems),
         );
     }
 }
@@ -57,8 +48,7 @@ fn spawn_beams(
     for (style, source, effect, target, instigator, attack) in query.iter() {
         let transform = get_transform(source.0.translation(), effect.0, style.width);
         commands
-            .spawn()
-            .insert(CreateAnimatedEffect {
+            .spawn(CreateAnimatedEffect {
                 transform,
                 effect: style.effect,
                 parent: None,

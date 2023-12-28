@@ -19,11 +19,6 @@ pub struct Shield {
     pub radius: f32,
 }
 
-#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
-pub enum ShieldSystems {
-    AbsorbDamage,
-}
-
 /// Flag component that indicates an attack bypasses shields.
 pub struct BypassShield;
 
@@ -68,15 +63,17 @@ pub fn shield_absorb_damage(
                 attack.result = AttackResult::Blocked;
 
                 // spawn a 'hit shield' effect
-                commands.spawn().insert(CreateAnimatedEffect {
-                    transform: Transform::from_translation(shield_transform.translation())
-                        * Transform::from_rotation(Quat::from_rotation_z(
-                            delta.y.atan2(delta.x) - std::f32::consts::FRAC_PI_2,
-                        ))
-                        * Transform::from_scale(Vec3::splat(shield.radius / 32.0)),
-                    parent: None,
-                    effect: AnimatedEffects::Shield,
-                });
+                commands.spawn(
+                    (CreateAnimatedEffect {
+                        transform: Transform::from_translation(shield_transform.translation())
+                            * Transform::from_rotation(Quat::from_rotation_z(
+                                delta.y.atan2(delta.x) - std::f32::consts::FRAC_PI_2,
+                            ))
+                            * Transform::from_scale(Vec3::splat(shield.radius / 32.0)),
+                        parent: None,
+                        effect: AnimatedEffects::Shield,
+                    }),
+                );
             }
         }
     }

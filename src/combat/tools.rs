@@ -1,8 +1,8 @@
 //! Functionality for devices that can be used to create some effect - be it spawn a projectile, damage or heal a target, etc.
 
-use bevy::prelude::*;
 use super::Target;
 use crate::game::GameTimeDelta;
+use bevy::prelude::*;
 
 /// A tool that applies an effect to a target
 #[derive(Component)]
@@ -14,7 +14,7 @@ pub struct TargettedTool {
     /// True if the tool is prepared to fire.
     pub armed: bool,
     /// True if the tool is currently being fired this instant.
-    pub firing: bool
+    pub firing: bool,
 }
 
 /// Cooldown timer for a tool.
@@ -31,33 +31,29 @@ impl Cooldown {
         self.remaining = self.duration;
     }
     /// Is the cooldown ready?
-    pub fn is_ready(&self) -> bool { self.remaining <= 0.0 }
+    pub fn is_ready(&self) -> bool {
+        self.remaining <= 0.0
+    }
 
     pub fn new(duration: f32) -> Self {
-        Cooldown { remaining: duration, duration }
+        Cooldown {
+            remaining: duration,
+            duration,
+        }
     }
 }
 
 /// Updates all cooldowns, decreasing remaining time by dt.
-pub fn update_cooldowns(
-    dt: Res<GameTimeDelta>,
-    mut query: Query<&mut Cooldown>
-) {
+pub fn update_cooldowns(dt: Res<GameTimeDelta>, mut query: Query<&mut Cooldown>) {
     for mut cooldown in query.iter_mut() {
         cooldown.remaining -= dt.0;
     }
 }
 
 pub fn fire_targetted_tools(
-        mut query: Query<(
-            &mut Cooldown,
-            &mut TargettedTool,
-            &Target,
-            &GlobalTransform
-        )>,
-        pos_query: Query<&GlobalTransform>
+    mut query: Query<(&mut Cooldown, &mut TargettedTool, &Target, &GlobalTransform)>,
+    pos_query: Query<&GlobalTransform>,
 ) {
-
     for (mut cooldown, mut tool, target, transform) in query.iter_mut() {
         if target.0.is_none() {
             continue;
@@ -72,7 +68,7 @@ pub fn fire_targetted_tools(
         }
 
         match pos_query.get_component::<GlobalTransform>(target.0.expect("target is None")) {
-            Err(_) => { continue },
+            Err(_) => continue,
             Ok(target_transform) => {
                 let delta = target_transform.translation() - transform.translation();
 
@@ -92,13 +88,5 @@ pub fn fire_targetted_tools(
                 cooldown.reset();
             }
         }
-        
     }
-
-}
-
-#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
-pub enum ToolSystems {
-    FireTargettedTools,
-    UpdateCooldowns
 }

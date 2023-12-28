@@ -8,6 +8,7 @@ use crate::game::GameTimeDelta;
 
 use super::beams::BeamTracking;
 
+#[derive(Resource)]
 struct AnimatedEffectPrefabs {
     small_explosion: AnimatedEffectData,
     small_muzzle_flare: AnimatedEffectData,
@@ -16,7 +17,7 @@ struct AnimatedEffectPrefabs {
     green_laser_beam: AnimatedEffectData,
     tiny_plus_explosion: AnimatedEffectData,
     smoke1: AnimatedEffectData,
-    shield: AnimatedEffectData
+    shield: AnimatedEffectData,
 }
 
 fn setup(
@@ -25,75 +26,105 @@ fn setup(
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
     let resources = AnimatedEffectPrefabs {
-        small_explosion: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
-            asset_server.load("art/small_explosion.png"),
-            Vec2::new(16.0, 16.0),
-            8,
-            1,
-        )),
-        0.1),
-        small_muzzle_flare: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
-            asset_server.load("art/muzzle_flare.png"),
-            Vec2::new(8.0, 8.0),
-            4,
-            1,
-        )),
-        0.05),
-        medium_explosion: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
-            asset_server.load("art/large_explosion.png"),
-            Vec2::new(32.0, 32.0),
-            9,
-            1,
-        )),
-        0.1),
-        blue_laser_beam: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
-            asset_server.load("art/laser_blue.png"),
-            Vec2::new(4.0, 4.0),
-            4,
-            1,
-        )),
-        0.05),
-        green_laser_beam: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
-            asset_server.load("art/laser_green.png"),
-            Vec2::new(4.0, 4.0),
-            4,
-            1,
-        )),
-        0.05),
-        tiny_plus_explosion: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
-            asset_server.load("art/tiny_plus_explosion.png"),
-            Vec2::new(8.0, 8.0),
-            5,
-            1,
-        )),
-        0.05),
-        smoke1: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
-            asset_server.load("art/smoke1.png"),
-            Vec2::new(16.0, 16.0),
-            12,
-            1,
-        )),
-        0.2),
-        shield: AnimatedEffectData::new(texture_atlases.add(TextureAtlas::from_grid(
-            asset_server.load("art/shield2.png"),
-            Vec2::new(64.0, 64.0),
-            4,
-            1,
-        )),
-        0.05),
+        small_explosion: AnimatedEffectData::new(
+            texture_atlases.add(TextureAtlas::from_grid(
+                asset_server.load("art/small_explosion.png"),
+                Vec2::new(16.0, 16.0),
+                8,
+                1,
+                None,
+                None,
+            )),
+            0.1,
+        ),
+        small_muzzle_flare: AnimatedEffectData::new(
+            texture_atlases.add(TextureAtlas::from_grid(
+                asset_server.load("art/muzzle_flare.png"),
+                Vec2::new(8.0, 8.0),
+                4,
+                1,
+                None,
+                None,
+            )),
+            0.05,
+        ),
+        medium_explosion: AnimatedEffectData::new(
+            texture_atlases.add(TextureAtlas::from_grid(
+                asset_server.load("art/large_explosion.png"),
+                Vec2::new(32.0, 32.0),
+                9,
+                1,
+                None,
+                None,
+            )),
+            0.1,
+        ),
+        blue_laser_beam: AnimatedEffectData::new(
+            texture_atlases.add(TextureAtlas::from_grid(
+                asset_server.load("art/laser_blue.png"),
+                Vec2::new(4.0, 4.0),
+                4,
+                1,
+                None,
+                None,
+            )),
+            0.05,
+        ),
+        green_laser_beam: AnimatedEffectData::new(
+            texture_atlases.add(TextureAtlas::from_grid(
+                asset_server.load("art/laser_green.png"),
+                Vec2::new(4.0, 4.0),
+                4,
+                1,
+                None,
+                None,
+            )),
+            0.05,
+        ),
+        tiny_plus_explosion: AnimatedEffectData::new(
+            texture_atlases.add(TextureAtlas::from_grid(
+                asset_server.load("art/tiny_plus_explosion.png"),
+                Vec2::new(8.0, 8.0),
+                5,
+                1,
+                None,
+                None,
+            )),
+            0.05,
+        ),
+        smoke1: AnimatedEffectData::new(
+            texture_atlases.add(TextureAtlas::from_grid(
+                asset_server.load("art/smoke1.png"),
+                Vec2::new(16.0, 16.0),
+                12,
+                1,
+                None,
+                None,
+            )),
+            0.2,
+        ),
+        shield: AnimatedEffectData::new(
+            texture_atlases.add(TextureAtlas::from_grid(
+                asset_server.load("art/shield2.png"),
+                Vec2::new(64.0, 64.0),
+                4,
+                1,
+                None,
+                None,
+            )),
+            0.05,
+        ),
     };
 
     commands.insert_resource(resources);
 }
 
-
 pub struct AnimatedEffectsPlugin;
 
 impl Plugin for AnimatedEffectsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(create_animated);
-        app.add_system(update_animated);
-        app.add_startup_system(setup);
+        app.add_systems(Update, (create_animated, update_animated));
+        app.add_systems(Startup, setup);
     }
 }
 
@@ -101,12 +132,12 @@ impl Plugin for AnimatedEffectsPlugin {
 pub struct CreateAnimatedEffect {
     pub transform: Transform,
     pub effect: AnimatedEffects,
-    pub parent: Option<Entity>
+    pub parent: Option<Entity>,
 }
 
 #[derive(Component)]
 pub struct AnimatedEffect {
-    pub finished: bool
+    pub finished: bool,
 }
 impl AnimatedEffect {
     pub fn new() -> Self {
@@ -123,12 +154,12 @@ pub enum AnimatedEffects {
     GreenLaserBeam,
     TinyPlusExplosion,
     Smoke1,
-    Shield
+    Shield,
 }
 
 struct AnimatedEffectData {
     atlas: Handle<TextureAtlas>,
-    frame_time: f32
+    frame_time: f32,
 }
 
 impl AnimatedEffectData {
@@ -175,7 +206,7 @@ fn create_animated(
     mut commands: Commands,
     prefabs: Res<AnimatedEffectPrefabs>,
     query: Query<(Entity, &CreateAnimatedEffect)>,
-    beam_track_query: Query<&BeamTracking>
+    beam_track_query: Query<&BeamTracking>,
 ) {
     for (entity, effect) in query.iter() {
         // despawn the creation command
@@ -194,12 +225,14 @@ fn create_animated(
 
         // Spawn an effect
         let spawned = commands
-            .spawn_bundle(SpriteSheetBundle {
+            .spawn(SpriteSheetBundle {
                 texture_atlas: prefab.atlas.clone(),
                 transform: effect.transform,
                 ..Default::default()
             })
-            .insert(AnimationTimer { 0: Timer::from_seconds(prefab.frame_time, true) })
+            .insert(AnimationTimer {
+                0: Timer::from_seconds(prefab.frame_time, TimerMode::Repeating),
+            })
             .insert(AnimatedEffect::new())
             .id();
 

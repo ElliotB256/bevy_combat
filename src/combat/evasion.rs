@@ -9,12 +9,6 @@ use super::{
 };
 use crate::movement::{MaxTurnSpeed, Speed, TurnSpeed};
 
-#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
-pub enum EvasionSystems {
-    CalculateEvasionRatings,
-    DetermineMissedAttacks,
-}
-
 /// An entity can evade incoming attacks.
 #[derive(Component)]
 pub struct Evasion {

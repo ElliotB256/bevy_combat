@@ -14,7 +14,6 @@ pub fn update_damage_flashes(
                 material_instance.last_damaged_time = timer.0;
             }
         }
-
         timer.0 += dt.0;
     }
 }

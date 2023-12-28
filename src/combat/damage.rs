@@ -1,6 +1,11 @@
 use bevy::prelude::*;
 
-use super::{effects::Effect, mortal::Health, Target, attack::{Attack, AttackResult}};
+use super::{
+    attack::{Attack, AttackResult},
+    effects::Effect,
+    mortal::Health,
+    Target,
+};
 
 /// Entity will deal a specified amount of damage.
 #[derive(Component)]
@@ -22,7 +27,6 @@ pub fn apply_damage(
     mut health_query: Query<(&mut Health, &mut LastDamageTimer)>,
 ) {
     for (target, damage, attack) in query.iter() {
-
         if attack.result != AttackResult::Hit {
             continue;
         }
@@ -34,9 +38,4 @@ pub fn apply_damage(
             }
         }
     }
-}
-
-#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
-pub enum DamageSystems {
-    ApplyDamage,
 }

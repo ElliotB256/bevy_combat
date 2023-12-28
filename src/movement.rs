@@ -1,5 +1,5 @@
 //! Movement and rotation of entities.
-use crate::game::{game_loop_run_criteria, GameTimeDelta};
+use crate::game::GameTimeDelta;
 use bevy::prelude::*;
 
 #[derive(Default, Component)]
@@ -59,7 +59,7 @@ fn update_translation(dt: Res<GameTimeDelta>, mut query: Query<(&Velocity, &mut 
     }
 }
 
-fn update_rotation(mut query: Query<(&Heading, &mut Transform)>) {
+pub fn update_rotation(mut query: Query<(&Heading, &mut Transform)>) {
     for (heading, mut trans) in query.iter_mut() {
         trans.rotation = Quat::from_rotation_z(heading.radians - std::f32::consts::FRAC_PI_2);
     }
@@ -77,7 +77,7 @@ fn calculate_speed(mut query: Query<(&MaxSpeed, &mut Speed)>) {
     }
 }
 
-fn update_heading(dt: Res<GameTimeDelta>, mut query: Query<(&TurnSpeed, &mut Heading)>) {
+pub fn update_heading(dt: Res<GameTimeDelta>, mut query: Query<(&TurnSpeed, &mut Heading)>) {
     for (turn_speed, mut heading) in query.iter_mut() {
         heading.radians += turn_speed.radians_per_second * dt.0;
         let two_pi = 2.0 * std::f32::consts::PI;
@@ -90,43 +90,25 @@ fn update_heading(dt: Res<GameTimeDelta>, mut query: Query<(&TurnSpeed, &mut Hea
     }
 }
 
-#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
-pub enum MovementSystems {
-    CalculateSpeed,
-    CalculateMaxSpeed,
-    UpdateRotation,
-    UpdateVelocity,
-    UpdateHeading,
-    Set,
-}
+#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemSet)]
+pub struct MovementSystems;
 
 #[derive(Default)]
 pub struct MovementPlugin;
 
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(
-            SystemSet::new()
-                .label(MovementSystems::Set)
-                .with_run_criteria(game_loop_run_criteria())
-                .with_system(update_heading.label(MovementSystems::UpdateHeading))
-                .with_system(calculate_max_speed.label(MovementSystems::CalculateMaxSpeed))
-                .with_system(
-                    calculate_speed
-                        .label(MovementSystems::CalculateSpeed)
-                        .after(MovementSystems::CalculateMaxSpeed),
-                )
-                .with_system(
-                    update_rotation
-                        .label(MovementSystems::UpdateRotation)
-                        .after(MovementSystems::UpdateHeading),
-                )
-                .with_system(
-                    update_velocity
-                        .label(MovementSystems::UpdateVelocity)
-                        .after(MovementSystems::UpdateRotation),
-                )
-                .with_system(update_translation.after(MovementSystems::UpdateVelocity)),
+        app.add_systems(
+            FixedUpdate,
+            (
+                update_heading,
+                calculate_max_speed,
+                calculate_speed.after(calculate_max_speed),
+                update_rotation.after(update_heading),
+                update_velocity.after(update_rotation),
+                update_translation.after(update_velocity),
+            )
+                .in_set(MovementSystems),
         );
     }
 }

@@ -1,0 +1,1 @@
+//! Templates of different types of ship.

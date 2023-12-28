@@ -1,84 +1,35 @@
 //! Module for implementing NPC artificial intelligence.
 
 use bevy::prelude::*;
-use bevy::time::FixedTimestep;
-use crate::constants::FIXED_TIME_STEP;
-
-pub mod movement;
-pub mod idle;
 pub mod aggression;
+pub mod idle;
+pub mod movement;
 
 #[derive(Default)]
 pub struct AIPlugin;
 
-#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
-pub enum AISystems {
-    PeelManoeuvre,
-    Pursue,
-    TurnToDestination,
-    DoRoaming,
-    UpdateAggressionSource,
-    DoRetargetting,
-    FindTargets,
-    IdleToCombat
-}
+#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemSet)]
+pub struct AISystems;
 
 impl Plugin for AIPlugin {
     fn build(&self, app: &mut App) {
-        app
-        .add_system_to_stage(
-            CoreStage::Update,
-            movement::peel_manoeuvre
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .label(AISystems::PeelManoeuvre)
-        )
-        .add_system_to_stage(
-            CoreStage::Update,
-            movement::pursue
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .label(AISystems::Pursue)
-        )
-        .add_system_to_stage(
-            CoreStage::Update,
-            movement::turn_to_destination
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .label(AISystems::TurnToDestination)
-                .after(crate::movement::MovementSystems::UpdateHeading)
-                .before(crate::movement::MovementSystems::UpdateRotation)
-        )
-        .add_system_to_stage(
-            CoreStage::Update,
-            idle::do_roaming
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .label(AISystems::DoRoaming)
-        )
-        ;
-
-        app.add_system_to_stage(
-            CoreStage::Update,
-            aggression::update_aggression_source
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .label(AISystems::UpdateAggressionSource)
-        )
-        .add_system_to_stage(
-            CoreStage::Update,
-            aggression::do_retargetting
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .label(AISystems::DoRetargetting)
-        )
-        .add_system_to_stage(
-            CoreStage::Update,
-            aggression::find_targets
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .label(AISystems::FindTargets)
-                .after(AISystems::UpdateAggressionSource)
-        );
-
-        app.add_system_to_stage(
-            CoreStage::Update,
-            idle::idle_to_combat
-                .with_run_criteria(FixedTimestep::step(FIXED_TIME_STEP as f64))
-                .label(AISystems::IdleToCombat)
+        app.add_systems(
+            FixedUpdate,
+            (
+                movement::peel_manoeuvre,
+                movement::pursue,
+                movement::turn_to_destination
+                    .after(crate::movement::update_heading)
+                    .before(crate::movement::update_rotation),
+                idle::do_roaming,
+                (
+                    aggression::update_aggression_source,
+                    aggression::do_retargetting,
+                    aggression::find_targets,
+                )
+                    .chain(),
+                idle::idle_to_combat,
+            ),
         );
     }
 }

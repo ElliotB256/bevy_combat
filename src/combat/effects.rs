@@ -1,8 +1,8 @@
 //! Effects that can be applied to entities, e.g. attacks or healing.
 
-use bevy::{prelude::*};
+use bevy::prelude::*;
 
-use super::{Target, tools::TargettedTool};
+use super::{tools::TargettedTool, Target};
 
 /// Transform of the effect source.
 #[derive(Component)]
@@ -30,13 +30,13 @@ type Spawner = fn(&mut Commands) -> Entity;
 
 #[derive(Component)]
 pub struct Effector {
-    pub spawn_effect: Spawner
+    pub spawn_effect: Spawner,
 }
 
 #[derive(Component)]
 pub struct Effect;
 
-pub fn apply_effects (
+pub fn apply_effects(
     mut commands: Commands,
     mut query: Query<(
         Entity,
@@ -47,9 +47,7 @@ pub fn apply_effects (
     )>,
     pos_query: Query<&GlobalTransform>,
 ) {
-
     for (entity, target, transform, mut tool, effect) in query.iter_mut() {
-        
         if !tool.firing || target.0.is_none() {
             continue;
         }
@@ -58,40 +56,27 @@ pub fn apply_effects (
 
         // Spawn the effect
         let spawned = (effect.spawn_effect)(&mut commands);
-        commands.entity(spawned).insert_bundle(
-            (
-                Target { 0: target.0 }, 
-                Instigator { 0: entity },
-                SourceTransform { 0: *transform },
-                Effectiveness::default(),
-                Effect
-            )
-        );
+        commands.entity(spawned).insert((
+            Target { 0: target.0 },
+            Instigator { 0: entity },
+            SourceTransform { 0: *transform },
+            Effectiveness::default(),
+            Effect,
+        ));
 
-        if let Ok(target_transform) = pos_query.get_component::<GlobalTransform>(target.0.expect("target is none")) {
-            commands.entity(spawned).insert(
-                EffectLocation { 0: target_transform.translation() }
-            );
+        if let Ok(target_transform) =
+            pos_query.get_component::<GlobalTransform>(target.0.expect("target is none"))
+        {
+            commands.entity(spawned).insert(EffectLocation {
+                0: target_transform.translation(),
+            });
         }
-        
     }
 }
 
 /// Deletes old effect entities.
-pub fn remove_old_effects (
-    mut commands: Commands,
-    query: Query<(
-        Entity,
-        &Effect,
-    )>
-) {
+pub fn remove_old_effects(mut commands: Commands, query: Query<(Entity, &Effect)>) {
     for (entity, _effect) in query.iter() {
         commands.entity(entity).despawn_recursive();
     }
-}
-
-#[derive(PartialEq, Clone, Hash, Debug, Eq, SystemLabel)]
-pub enum EffectSystems {
-    RemoveOldEffects,
-    ApplyEffects
 }

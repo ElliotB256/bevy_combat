@@ -1,15 +1,20 @@
 use bevy::{
     diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
     math::Quat,
-    prelude::*, sprite::{MaterialMesh2dBundle, Material2dPlugin},
+    prelude::*,
+    sprite::{Material2dPlugin, MaterialMesh2dBundle},
 };
 
-use bevy_combat::{ai::{idle::IdleBehavior, movement::TurnToDestinationBehavior, AIPlugin}, combat::{evasion::Evasion, damage::LastDamageTimer}, materials::ShipMaterial};
 use bevy_combat::combat::{
     mortal::{Health, MaxHealth},
     Target, Team,
 };
 use bevy_combat::{ai::aggression::*, combat::shields::Shield};
+use bevy_combat::{
+    ai::{idle::IdleBehavior, movement::TurnToDestinationBehavior, AIPlugin},
+    combat::{damage::LastDamageTimer, evasion::Evasion},
+    materials::ShipMaterial,
+};
 use bevy_combat::{
     combat::mortal::Mortal,
     fx::{animated::AnimatedEffects, death::DeathEffect},
@@ -25,25 +30,29 @@ pub struct Position(Transform);
 
 fn main() {
     let mut app = App::new();
-        app
-        .add_plugins(DefaultPlugins)
-        .add_plugin(LogDiagnosticsPlugin::default())
-        .add_plugin(FrameTimeDiagnosticsPlugin::default())
-        .add_plugin(BaseGamePlugin)
-        .add_plugin(AIPlugin)
-        .add_plugin(MovementPlugin)
-        .add_plugin(bevy_combat::combat::CombatPlugin)
-        .add_plugin(bevy_combat::fx::animated::AnimatedEffectsPlugin)
-        .add_plugin(bevy_combat::fx::EffectsPlugin)
-        .add_plugin(bevy_combat::fx::beams::BeamEffectPlugin)
-        .add_plugin(Material2dPlugin::<ShipMaterial>::default())
-        .insert_resource(bevy::log::LogSettings {
-            level: bevy::log::Level::DEBUG,
-            ..Default::default()
-        })
-        .add_startup_system(setup)
-        .add_system(tick.label("Tick"));
-        app.run()
+    app.add_plugins(DefaultPlugins.set(bevy::log::LogPlugin {
+        level: bevy::log::Level::INFO,
+        ..default()
+    }))
+    .add_plugins((
+        LogDiagnosticsPlugin::default(),
+        FrameTimeDiagnosticsPlugin::default(),
+    ));
+
+    app.add_plugins((
+        BaseGamePlugin,
+        AIPlugin,
+        MovementPlugin,
+        bevy_combat::combat::CombatPlugin,
+        bevy_combat::fx::animated::AnimatedEffectsPlugin,
+        bevy_combat::fx::EffectsPlugin,
+        bevy_combat::fx::beams::BeamEffectPlugin,
+        Material2dPlugin::<ShipMaterial>::default(),
+    ));
+
+    app.add_systems(Startup, setup);
+    app.add_systems(Update, tick);
+    app.run()
 }
 
 fn setup(
@@ -61,9 +70,8 @@ fn setup(
     let drone_mask = assets.load("art/drone_mask.png");
 
     commands
-        .spawn()
-        .insert_bundle(Camera2dBundle::default())
-        .insert(PrintTimer(Timer::from_seconds(1.0, true)))
+        .spawn(Camera2dBundle::default())
+        .insert(PrintTimer(Timer::from_seconds(1.0, TimerMode::Repeating)))
         .insert(Position(Transform::from_translation(Vec3::new(
             0.0, 0.0, 1000.0,
         ))));
@@ -79,27 +87,29 @@ fn setup(
         let scale = Vec3::splat(0.5);
 
         commands
-            .spawn()
-            .insert_bundle(
-                {
-                    MaterialMesh2dBundle {
-                        mesh: meshes.add(Mesh::from(shape::Quad { size: Vec2::new(32.0,32.0), flip: false})).into(),
-                        material: materials.add(ShipMaterial {
-                            color: Color::rgba(0.0,0.0,1.0,1.0),
-                            last_damaged_time: 1.0,
-                            base_texture: smallship_base.clone().into(),
-                            color_mask: smallship_mask.clone().into()
-                        }),
-                        transform: Transform {
-                            translation,
-                            rotation,
-                            scale,
-                        },
-                        ..default()
-                    }
+            .spawn({
+                MaterialMesh2dBundle {
+                    mesh: meshes
+                        .add(Mesh::from(shape::Quad {
+                            size: Vec2::new(32.0, 32.0),
+                            flip: false,
+                        }))
+                        .into(),
+                    material: materials.add(ShipMaterial {
+                        color: Color::rgba(0.0, 0.0, 1.0, 1.0),
+                        last_damaged_time: 1.0,
+                        base_texture: smallship_base.clone().into(),
+                        color_mask: smallship_mask.clone().into(),
+                    }),
+                    transform: Transform {
+                        translation,
+                        rotation,
+                        scale,
+                    },
+                    ..default()
                 }
-            )
-            .insert_bundle(MovementBundle {
+            })
+            .insert(MovementBundle {
                 velocity: Velocity::default(),
                 speed: Speed::default(),
                 max_speed: MaxSpeed::default(),
@@ -117,7 +127,7 @@ fn setup(
                 centre: Vec3::default(),
                 radius: 10.0,
             })
-            .insert_bundle((
+            .insert((
                 AggroRadius { 0: 1000.0 },
                 AggroLocation::default(),
                 TargetingOrders {
@@ -137,7 +147,7 @@ fn setup(
                     remaining_time: 4.0,
                 },
             ))
-            .insert_bundle((
+            .insert((
                 bevy_combat::combat::tools::Cooldown::new(1.0),
                 bevy_combat::combat::tools::TargettedTool {
                     range: 100.0,
@@ -172,14 +182,18 @@ fn setup(
         let scale = Vec3::splat(0.5);
 
         commands
-            .spawn()
-            .insert_bundle(MaterialMesh2dBundle {
-                mesh: meshes.add(Mesh::from(shape::Quad { size: Vec2::new(16.0,16.0), flip: false})).into(),
+            .spawn(MaterialMesh2dBundle {
+                mesh: meshes
+                    .add(Mesh::from(shape::Quad {
+                        size: Vec2::new(16.0, 16.0),
+                        flip: false,
+                    }))
+                    .into(),
                 material: materials.add(ShipMaterial {
-                    color: Color::rgba(1.0,0.0,0.0,1.0),
+                    color: Color::rgba(1.0, 0.0, 0.0, 1.0),
                     last_damaged_time: 1.0,
                     base_texture: drone_base.clone().into(),
-                    color_mask: drone_mask.clone().into()
+                    color_mask: drone_mask.clone().into(),
                 }),
                 transform: Transform {
                     translation,
@@ -188,7 +202,7 @@ fn setup(
                 },
                 ..default()
             })
-            .insert_bundle(MovementBundle {
+            .insert(MovementBundle {
                 velocity: Velocity::default(),
                 speed: Speed::default(),
                 max_speed: MaxSpeed::default(),
@@ -206,7 +220,7 @@ fn setup(
                 centre: Vec3::default(),
                 radius: 10.0,
             })
-            .insert_bundle((
+            .insert((
                 AggroRadius { 0: 1000.0 },
                 AggroLocation::default(),
                 TargetingOrders {
@@ -226,7 +240,7 @@ fn setup(
                     remaining_time: 4.0,
                 },
             ))
-            .insert_bundle((
+            .insert((
                 bevy_combat::combat::tools::Cooldown::new(0.2),
                 bevy_combat::combat::tools::TargettedTool {
                     range: 80.0,

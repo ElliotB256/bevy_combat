@@ -79,7 +79,7 @@ pub fn pursue(
                 if delta.length_squared() < PROXIMITY_RADIUS * PROXIMITY_RADIUS {
                     commands
                         .entity(entity)
-                        .remove_bundle::<(TurnToDestinationBehavior, PursueBehavior)>();
+                        .remove::<(TurnToDestinationBehavior, PursueBehavior)>();
                     commands.entity(entity).insert(PeelManoeuvreBehavior);
                 }
             }
