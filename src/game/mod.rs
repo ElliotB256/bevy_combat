@@ -50,8 +50,8 @@ impl Plugin for BaseGamePlugin {
 }
 
 fn startup(mut commands: Commands) {
-    commands.insert_resource(GameTimeDelta { 0: 1.0 / 60.0 });
-    commands.insert_resource(GameSpeed { 0: 2 });
+    commands.insert_resource(GameTimeDelta(1.0 / 60.0));
+    commands.insert_resource(GameSpeed(2));
 }
 
 fn control_game_speed(

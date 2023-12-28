@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::game::DESPAWN_STAGE;
+
 
 pub mod attack;
 pub mod damage;
@@ -11,13 +11,10 @@ pub mod shields;
 pub mod tools;
 
 #[derive(Clone, Copy, Component)]
+#[derive(Default)]
 pub struct Target(pub Option<Entity>);
 
-impl Default for Target {
-    fn default() -> Self {
-        Target { 0: None }
-    }
-}
+
 
 /// The team an entity is assigned to.
 #[derive(Copy, Clone, PartialEq, Eq, Component)]

@@ -43,7 +43,7 @@ pub fn idle_to_combat(
 ) {
     for (entity, target) in query.iter() {
         if target.0.is_some() {
-            commands.entity(entity).insert(PursueBehavior::default());
+            commands.entity(entity).insert(PursueBehavior);
             commands.entity(entity).remove::<IdleBehavior>();
         }
     }

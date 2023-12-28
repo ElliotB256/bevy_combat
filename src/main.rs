@@ -36,7 +36,7 @@ fn main() {
     }))
     .add_plugins((
         LogDiagnosticsPlugin::default(),
-        FrameTimeDiagnosticsPlugin::default(),
+        FrameTimeDiagnosticsPlugin,
     ));
 
     app.add_plugins((
@@ -98,8 +98,8 @@ fn setup(
                     material: materials.add(ShipMaterial {
                         color: Color::rgba(0.0, 0.0, 1.0, 1.0),
                         last_damaged_time: 1.0,
-                        base_texture: smallship_base.clone().into(),
-                        color_mask: smallship_mask.clone().into(),
+                        base_texture: smallship_base.clone(),
+                        color_mask: smallship_mask.clone(),
                     }),
                     transform: Transform {
                         translation,
@@ -128,7 +128,7 @@ fn setup(
                 radius: 10.0,
             })
             .insert((
-                AggroRadius { 0: 1000.0 },
+                AggroRadius(1000.0),
                 AggroLocation::default(),
                 TargetingOrders {
                     preferred: AgentCategory::FIGHTER,
@@ -136,10 +136,10 @@ fn setup(
                     target_same_team: false,
                 },
                 Target::default(),
-                Team { 0: 1 },
-                Health { 0: 100.0 },
-                LastDamageTimer { 0: 0.0 },
-                MaxHealth { 0: 100.0 },
+                Team(1),
+                Health(100.0),
+                LastDamageTimer(0.0),
+                MaxHealth(100.0),
                 AgentCategory::FIGHTER,
                 Mortal,
                 RetargetBehavior {
@@ -192,8 +192,8 @@ fn setup(
                 material: materials.add(ShipMaterial {
                     color: Color::rgba(1.0, 0.0, 0.0, 1.0),
                     last_damaged_time: 1.0,
-                    base_texture: drone_base.clone().into(),
-                    color_mask: drone_mask.clone().into(),
+                    base_texture: drone_base.clone(),
+                    color_mask: drone_mask.clone(),
                 }),
                 transform: Transform {
                     translation,
@@ -221,7 +221,7 @@ fn setup(
                 radius: 10.0,
             })
             .insert((
-                AggroRadius { 0: 1000.0 },
+                AggroRadius(1000.0),
                 AggroLocation::default(),
                 TargetingOrders {
                     preferred: AgentCategory::FIGHTER,
@@ -229,10 +229,10 @@ fn setup(
                     target_same_team: false,
                 },
                 Target::default(),
-                Team { 0: 2 },
-                Health { 0: 50.0 },
-                LastDamageTimer { 0: 0.0 },
-                MaxHealth { 0: 50.0 },
+                Team(2),
+                Health(50.0),
+                LastDamageTimer(0.0),
+                MaxHealth(50.0),
                 AgentCategory::FIGHTER,
                 Mortal,
                 RetargetBehavior {

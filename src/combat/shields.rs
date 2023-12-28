@@ -64,7 +64,7 @@ pub fn shield_absorb_damage(
 
                 // spawn a 'hit shield' effect
                 commands.spawn(
-                    (CreateAnimatedEffect {
+                    CreateAnimatedEffect {
                         transform: Transform::from_translation(shield_transform.translation())
                             * Transform::from_rotation(Quat::from_rotation_z(
                                 delta.y.atan2(delta.x) - std::f32::consts::FRAC_PI_2,
@@ -72,7 +72,7 @@ pub fn shield_absorb_damage(
                             * Transform::from_scale(Vec3::splat(shield.radius / 32.0)),
                         parent: None,
                         effect: AnimatedEffects::Shield,
-                    }),
+                    },
                 );
             }
         }

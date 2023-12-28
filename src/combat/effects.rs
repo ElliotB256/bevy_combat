@@ -22,7 +22,7 @@ pub struct Effectiveness(pub f32);
 
 impl Default for Effectiveness {
     fn default() -> Self {
-        Effectiveness { 0: 1.0 }
+        Effectiveness(1.0)
     }
 }
 
@@ -57,9 +57,9 @@ pub fn apply_effects(
         // Spawn the effect
         let spawned = (effect.spawn_effect)(&mut commands);
         commands.entity(spawned).insert((
-            Target { 0: target.0 },
-            Instigator { 0: entity },
-            SourceTransform { 0: *transform },
+            Target(target.0),
+            Instigator(entity),
+            SourceTransform(*transform),
             Effectiveness::default(),
             Effect,
         ));
@@ -67,9 +67,7 @@ pub fn apply_effects(
         if let Ok(target_transform) =
             pos_query.get_component::<GlobalTransform>(target.0.expect("target is none"))
         {
-            commands.entity(spawned).insert(EffectLocation {
-                0: target_transform.translation(),
-            });
+            commands.entity(spawned).insert(EffectLocation(target_transform.translation()));
         }
     }
 }

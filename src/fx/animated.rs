@@ -139,6 +139,12 @@ pub struct CreateAnimatedEffect {
 pub struct AnimatedEffect {
     pub finished: bool,
 }
+impl Default for AnimatedEffect {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AnimatedEffect {
     pub fn new() -> Self {
         AnimatedEffect { finished: false }
@@ -230,9 +236,7 @@ fn create_animated(
                 transform: effect.transform,
                 ..Default::default()
             })
-            .insert(AnimationTimer {
-                0: Timer::from_seconds(prefab.frame_time, TimerMode::Repeating),
-            })
+            .insert(AnimationTimer(Timer::from_seconds(prefab.frame_time, TimerMode::Repeating)))
             .insert(AnimatedEffect::new())
             .id();
 
