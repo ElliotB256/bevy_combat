@@ -251,7 +251,7 @@ fn create_animated(
         }
 
         // hacky for now - add beam tracking if it exists
-        if let Ok(beam_tracking) = beam_track_query.get_component::<BeamTracking>(entity) {
+        if let Ok(beam_tracking) = beam_track_query.get(entity) {
             commands.entity(spawned).insert(*beam_tracking);
         }
     }

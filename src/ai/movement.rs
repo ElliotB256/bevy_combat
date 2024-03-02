@@ -61,7 +61,7 @@ pub fn pursue(
             continue;
         }
 
-        let result = pos_query.get_component::<GlobalTransform>(target.0.expect("target is none"));
+        let result = pos_query.get(target.0.expect("target is none"));
         
         match result {
             Err(_) => {
@@ -114,7 +114,8 @@ pub fn peel_manoeuvre(
             continue;
         }
 
-        let result = pos_query.get_component::<GlobalTransform>(target.0.expect("target is none"));
+        let result = pos_query.get(target.0.expect("target is none"));
+        
         match result {
             Err(_) => {
                 // target does not have position. Disengage.

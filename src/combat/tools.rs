@@ -67,7 +67,7 @@ pub fn fire_targetted_tools(
             continue;
         }
 
-        match pos_query.get_component::<GlobalTransform>(target.0.expect("target is None")) {
+        match pos_query.get(target.0.expect("target is None")) {
             Err(_) => continue,
             Ok(target_transform) => {
                 let delta = target_transform.translation() - transform.translation();
