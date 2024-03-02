@@ -49,7 +49,7 @@ pub struct MovementBundle {
 
 fn update_velocity(mut query: Query<(&Speed, &Transform, &mut Velocity)>) {
     for (speed, transform, mut velocity) in query.iter_mut() {
-        velocity.0 = speed.0 * transform.local_y();
+        velocity.0 = speed.0 * *transform.local_y();
     }
 }
 

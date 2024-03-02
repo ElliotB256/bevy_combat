@@ -72,9 +72,7 @@ fn setup(
     commands
         .spawn(Camera2dBundle::default())
         .insert(PrintTimer(Timer::from_seconds(1.0, TimerMode::Repeating)))
-        .insert(Position(Transform::from_translation(Vec3::new(
-            0.0, 0.0, 1000.0,
-        ))));
+        ;
 
     commands.insert_resource(ClearColor(Color::rgb(0.8, 0.8, 0.8)));
 

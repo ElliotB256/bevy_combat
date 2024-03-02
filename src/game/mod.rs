@@ -1,4 +1,4 @@
-use bevy::input::{keyboard::KeyCode, Input};
+use bevy::input::{keyboard::KeyCode, ButtonInput};
 use bevy::prelude::*;
 
 use crate::constants::FIXED_TIME_STEP;
@@ -55,11 +55,11 @@ fn startup(mut commands: Commands) {
 }
 
 fn control_game_speed(
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     mut dt: ResMut<GameTimeDelta>,
     mut speed: ResMut<GameSpeed>,
 ) {
-    if keyboard_input.just_pressed(KeyCode::Equals) {
+    if keyboard_input.just_pressed(KeyCode::Equal) {
         speed.0 += 1;
     }
     if keyboard_input.just_pressed(KeyCode::Minus) {

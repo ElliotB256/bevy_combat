@@ -1,12 +1,11 @@
 use bevy::{
     prelude::*,
-    reflect::TypeUuid,
+    reflect::TypePath,
     render::render_resource::{AsBindGroup, ShaderRef},
     sprite::Material2d
 };
 
-#[derive(AsBindGroup, TypeUuid, Clone, Asset, TypePath)]
-#[uuid = "0e307091-2db9-40e7-ae85-cd890941101d"]
+#[derive(AsBindGroup, TypePath, Clone, Asset)]
 pub struct ShipMaterial {
     #[uniform(0)]
     pub color: Color,

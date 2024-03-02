@@ -3,7 +3,7 @@ use bitflags::bitflags;
 use crate::{game::GameTimeDelta, combat::Target};
 
 bitflags! {
-    #[derive(Default, Component)]
+    #[derive(Default, Component, Copy, Clone)]
     pub struct AgentCategory: u32 {
         const FIGHTER = 0b00000001;
         const FRIGATE = 0b00000010;

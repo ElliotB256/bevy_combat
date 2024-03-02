@@ -3,15 +3,15 @@ struct ShipMaterial {
     last_damaged_time: f32
 };
 
-@group(1) @binding(0)
+@group(2) @binding(0)
 var<uniform> material: ShipMaterial;
-@group(1) @binding(1)
+@group(2) @binding(1)
 var base_texture: texture_2d<f32>;
-@group(1) @binding(2)
+@group(2) @binding(2)
 var base_texture_sampler: sampler;
-@group(1) @binding(3)
+@group(2) @binding(3)
 var color_mask: texture_2d<f32>;
-@group(1) @binding(4)
+@group(2) @binding(4)
 var color_mask_sampler: sampler;
 
 @fragment
