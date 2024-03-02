@@ -23,12 +23,13 @@ struct AnimatedEffectPrefabs {
 fn setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut texture_atlases: ResMut<Assets<TextureAtlasLayout>>,
 ) {
     let resources = AnimatedEffectPrefabs {
         small_explosion: AnimatedEffectData::new(
-            texture_atlases.add(TextureAtlas::from_grid(
-                asset_server.load("art/small_explosion.png"),
+            asset_server.load("art/small_explosion.png"),
+            texture_atlases.add(
+                TextureAtlasLayout::from_grid(
                 Vec2::new(16.0, 16.0),
                 8,
                 1,
@@ -38,8 +39,8 @@ fn setup(
             0.1,
         ),
         small_muzzle_flare: AnimatedEffectData::new(
-            texture_atlases.add(TextureAtlas::from_grid(
-                asset_server.load("art/muzzle_flare.png"),
+            asset_server.load("art/muzzle_flare.png"),
+            texture_atlases.add(TextureAtlasLayout::from_grid(
                 Vec2::new(8.0, 8.0),
                 4,
                 1,
@@ -49,8 +50,8 @@ fn setup(
             0.05,
         ),
         medium_explosion: AnimatedEffectData::new(
-            texture_atlases.add(TextureAtlas::from_grid(
-                asset_server.load("art/large_explosion.png"),
+            asset_server.load("art/large_explosion.png"),
+            texture_atlases.add(TextureAtlasLayout::from_grid(
                 Vec2::new(32.0, 32.0),
                 9,
                 1,
@@ -60,8 +61,8 @@ fn setup(
             0.1,
         ),
         blue_laser_beam: AnimatedEffectData::new(
-            texture_atlases.add(TextureAtlas::from_grid(
-                asset_server.load("art/laser_blue.png"),
+            asset_server.load("art/laser_blue.png"),
+            texture_atlases.add(TextureAtlasLayout::from_grid(
                 Vec2::new(4.0, 4.0),
                 4,
                 1,
@@ -71,8 +72,8 @@ fn setup(
             0.05,
         ),
         green_laser_beam: AnimatedEffectData::new(
-            texture_atlases.add(TextureAtlas::from_grid(
-                asset_server.load("art/laser_green.png"),
+            asset_server.load("art/laser_green.png"),
+            texture_atlases.add(TextureAtlasLayout::from_grid(
                 Vec2::new(4.0, 4.0),
                 4,
                 1,
@@ -82,8 +83,8 @@ fn setup(
             0.05,
         ),
         tiny_plus_explosion: AnimatedEffectData::new(
-            texture_atlases.add(TextureAtlas::from_grid(
-                asset_server.load("art/tiny_plus_explosion.png"),
+            asset_server.load("art/tiny_plus_explosion.png"),
+            texture_atlases.add(TextureAtlasLayout::from_grid(
                 Vec2::new(8.0, 8.0),
                 5,
                 1,
@@ -93,8 +94,8 @@ fn setup(
             0.05,
         ),
         smoke1: AnimatedEffectData::new(
-            texture_atlases.add(TextureAtlas::from_grid(
-                asset_server.load("art/smoke1.png"),
+            asset_server.load("art/smoke1.png"),
+            texture_atlases.add(TextureAtlasLayout::from_grid(
                 Vec2::new(16.0, 16.0),
                 12,
                 1,
@@ -104,8 +105,8 @@ fn setup(
             0.2,
         ),
         shield: AnimatedEffectData::new(
-            texture_atlases.add(TextureAtlas::from_grid(
-                asset_server.load("art/shield2.png"),
+            asset_server.load("art/shield2.png"),
+            texture_atlases.add(TextureAtlasLayout::from_grid(
                 Vec2::new(64.0, 64.0),
                 4,
                 1,
@@ -164,13 +165,14 @@ pub enum AnimatedEffects {
 }
 
 struct AnimatedEffectData {
-    atlas: Handle<TextureAtlas>,
+    atlas: Handle<TextureAtlasLayout>,
+    texture: Handle<Image>,
     frame_time: f32,
 }
 
 impl AnimatedEffectData {
-    pub fn new(atlas: Handle<TextureAtlas>, frame_time: f32) -> Self {
-        AnimatedEffectData { atlas, frame_time }
+    pub fn new(texture : Handle<Image>, atlas: Handle<TextureAtlasLayout>, frame_time: f32) -> Self {
+        AnimatedEffectData { texture, atlas, frame_time }
     }
 }
 
@@ -180,25 +182,24 @@ pub struct AnimationTimer(pub Timer);
 fn update_animated(
     mut commands: Commands,
     time: Res<GameTimeDelta>,
-    texture_atlases: Res<Assets<TextureAtlas>>,
+    texture_atlases: Res<Assets<TextureAtlasLayout>>,
     mut query: Query<(
         Entity,
         &mut AnimationTimer,
-        &mut TextureAtlasSprite,
+        &mut TextureAtlas,
         &mut AnimatedEffect,
-        &Handle<TextureAtlas>,
     )>,
 ) {
-    for (entity, mut timer, mut sprite, mut effect, texture_atlas_handle) in query.iter_mut() {
+    for (entity, mut timer, mut sprite, mut effect) in query.iter_mut() {
         timer.tick(Duration::from_secs_f32(time.0));
         if timer.finished() {
-            let texture_atlas = texture_atlases.get(texture_atlas_handle).unwrap();
+            let layout = texture_atlases.get(sprite.layout.clone()).unwrap();
 
             if effect.finished {
                 commands.entity(entity).despawn_recursive();
             }
 
-            if sprite.index < texture_atlas.textures.len() - 1 {
+            if sprite.index < layout.textures.len() - 1 {
                 //advance the frames.
                 sprite.index += 1;
             } else {
@@ -232,7 +233,11 @@ fn create_animated(
         // Spawn an effect
         let spawned = commands
             .spawn(SpriteSheetBundle {
-                texture_atlas: prefab.atlas.clone(),
+                atlas: TextureAtlas {
+                    layout: prefab.atlas.clone(),
+                    index: 0
+                },
+                texture: prefab.texture.clone(),
                 transform: effect.transform,
                 ..Default::default()
             })
@@ -246,7 +251,7 @@ fn create_animated(
         }
 
         // hacky for now - add beam tracking if it exists
-        if let Ok(beam_tracking) = beam_track_query.get_component::<BeamTracking>(entity) {
+        if let Ok(beam_tracking) = beam_track_query.get(entity) {
             commands.entity(spawned).insert(*beam_tracking);
         }
     }

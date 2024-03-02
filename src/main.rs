@@ -1,6 +1,5 @@
 use bevy::{
     diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
-    math::Quat,
     prelude::*,
     sprite::{Material2dPlugin, MaterialMesh2dBundle},
 };
@@ -25,8 +24,6 @@ use rand::Rng;
 
 #[derive(Component)]
 pub struct PrintTimer(Timer);
-#[derive(Component)]
-pub struct Position(Transform);
 
 fn main() {
     let mut app = App::new();
@@ -34,10 +31,7 @@ fn main() {
         level: bevy::log::Level::INFO,
         ..default()
     }))
-    .add_plugins((
-        LogDiagnosticsPlugin::default(),
-        FrameTimeDiagnosticsPlugin,
-    ));
+    .add_plugins((LogDiagnosticsPlugin::default(), FrameTimeDiagnosticsPlugin));
 
     app.add_plugins((
         BaseGamePlugin,
@@ -71,10 +65,7 @@ fn setup(
 
     commands
         .spawn(Camera2dBundle::default())
-        .insert(PrintTimer(Timer::from_seconds(1.0, TimerMode::Repeating)))
-        .insert(Position(Transform::from_translation(Vec3::new(
-            0.0, 0.0, 1000.0,
-        ))));
+        .insert(PrintTimer(Timer::from_seconds(1.0, TimerMode::Repeating)));
 
     commands.insert_resource(ClearColor(Color::rgb(0.8, 0.8, 0.8)));
 
@@ -90,9 +81,8 @@ fn setup(
             .spawn({
                 MaterialMesh2dBundle {
                     mesh: meshes
-                        .add(Mesh::from(shape::Quad {
-                            size: Vec2::new(32.0, 32.0),
-                            flip: false,
+                        .add(Mesh::from(Rectangle {
+                            half_size: Vec2::new(16.0, 16.0),
                         }))
                         .into(),
                     material: materials.add(ShipMaterial {
@@ -184,9 +174,8 @@ fn setup(
         commands
             .spawn(MaterialMesh2dBundle {
                 mesh: meshes
-                    .add(Mesh::from(shape::Quad {
-                        size: Vec2::new(16.0, 16.0),
-                        flip: false,
+                    .add(Mesh::from(Rectangle {
+                        half_size: Vec2::new(8.0, 8.0),
                     }))
                     .into(),
                 material: materials.add(ShipMaterial {

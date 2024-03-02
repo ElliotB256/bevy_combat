@@ -69,11 +69,11 @@ fn beams_track_target(
     world_query: Query<&GlobalTransform>,
 ) {
     for (mut tracking, mut transform) in query.iter_mut() {
-        if let Ok(start_t) = world_query.get_component::<GlobalTransform>(tracking.source) {
+        if let Ok(start_t) = world_query.get(tracking.source) {
             tracking.start = start_t.translation();
         }
         if tracking.track_target {
-            if let Ok(end_t) = world_query.get_component::<GlobalTransform>(tracking.target) {
+            if let Ok(end_t) = world_query.get(tracking.target) {
                 tracking.end = end_t.translation();
             }
         }
