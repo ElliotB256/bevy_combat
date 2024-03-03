@@ -1,7 +1,5 @@
 use bevy::{
-    diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
-    prelude::*,
-    sprite::{Material2dPlugin, MaterialMesh2dBundle},
+    asset::AssetMetaCheck, diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin}, prelude::*, sprite::{Material2dPlugin, MaterialMesh2dBundle}
 };
 
 use bevy_combat::combat::{
@@ -27,6 +25,7 @@ pub struct PrintTimer(Timer);
 
 fn main() {
     let mut app = App::new();
+    app.insert_resource(AssetMetaCheck::Never);
     app.add_plugins(DefaultPlugins.set(bevy::log::LogPlugin {
         level: bevy::log::Level::INFO,
         ..default()

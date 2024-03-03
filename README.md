@@ -39,6 +39,49 @@ To run for pc:
 cargo run
 ```
 
+## Building for web (fast)
+
+Make sure you have added the wasm target to your toolchain:
+```
+rustup target add wasm32-unknown-unknown
+```
+
+If you do not have `wasm-server-runner`, install it via
+```
+cargo install wasm-server-runner
+```
+
+Afterwards, you can build and run in your browser:
+```
+cargo run --target wasm32-unknown-unknown
+```
+
+For more info on web deployment, see [the bevy book](https://bevy-cheatbook.github.io/platforms/wasm.html).
+
+### Building for itch.io
+
+Following [these instructions](https://bevy-cheatbook.github.io/platforms/wasm/webpage.html)...
+
+itch.io build requires
+```
+cargo install wasm-bindgen-cli
+```
+
+Build the wasm target, then run `wasm-bindgen`. After, optimize the generated `.wasm`:
+```
+cargo build --release --target wasm32-unknown-unknown
+wasm-bindgen --no-typescript --target web --out-dir ./out/ --out-name "game" ./target/wasm32-unknown-unknown/release/bevy_combat.wasm
+```
+
+If you want to optimize further:
+```
+wasm-bindgen --no-typescript --target web --out-dir ./out/ --out-name "preopt_game" ./target/wasm32-unknown-unknown/release/bevy_combat.wasm
+wasm-opt -O -ol 100 -s 100 -o game.wasm preopt_game.wasm
+```
+Copy the assets folder to `/out`. Copy `web/index.html` to `/out/index.html`
+
+Zip the `out` folder, upload to itch.io, and celebrate!
+
 ## Credits
 
 Credit for individual art assets can be found [here](assets/credits.md).
