@@ -16,9 +16,9 @@ pub struct MaxTurnSpeed {
 pub struct TurnSpeed {
     pub radians_per_second: f32,
 }
-#[derive(Component)]
+#[derive(Component, Default)]
 pub struct Mass(pub f32);
-#[derive(Component)]
+#[derive(Component, Default)]
 pub struct Thrust(pub f32);
 
 #[derive(Default, Component)]
@@ -35,7 +35,7 @@ impl MaxTurnSpeed {
     }
 }
 
-#[derive(Bundle)]
+#[derive(Bundle, Default)]
 pub struct MovementBundle {
     pub velocity: Velocity,
     pub speed: Speed,
