@@ -16,3 +16,14 @@ rand = "0.8"
 bitflags = "2.4.2"
 multimap = "0.10"
 bevy = "0.13"
+
+[profile.release]
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[profile.web-release]
+inherits = "release"
+opt-level = "s"
+strip = "debuginfo"
+lto = true

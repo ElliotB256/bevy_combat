@@ -39,7 +39,7 @@ To run for pc:
 cargo run
 ```
 
-## Testing for web
+## Building for web (fast)
 
 Make sure you have added the wasm target to your toolchain:
 ```
@@ -67,10 +67,16 @@ itch.io build requires
 cargo install wasm-bindgen-cli
 ```
 
-Build the wasm target, then run `wasm-bindgen`:
+Build the wasm target, then run `wasm-bindgen`. After, optimize the generated `.wasm`:
 ```
 cargo build --release --target wasm32-unknown-unknown
 wasm-bindgen --no-typescript --target web --out-dir ./out/ --out-name "game" ./target/wasm32-unknown-unknown/release/bevy_combat.wasm
+```
+
+If you want to optimize further:
+```
+wasm-bindgen --no-typescript --target web --out-dir ./out/ --out-name "preopt_game" ./target/wasm32-unknown-unknown/release/bevy_combat.wasm
+wasm-opt -O -ol 100 -s 100 -o game.wasm preopt_game.wasm
 ```
 Copy the assets folder to `/out`. Copy `web/index.html` to `/out/index.html`
 
