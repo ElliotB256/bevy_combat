@@ -5,6 +5,8 @@ use bevy::{
     sprite::Material2d
 };
 
+use crate::combat::Team;
+
 #[derive(AsBindGroup, TypePath, Clone, Asset)]
 pub struct ShipMaterial {
     #[uniform(0)]
@@ -22,5 +24,22 @@ pub struct ShipMaterial {
 impl Material2d for ShipMaterial {
     fn fragment_shader() -> ShaderRef {
         "shaders/ship.wgsl".into()
+    }
+}
+
+pub fn set_ship_shader_team_color(
+    query: Query<(&Handle<ShipMaterial>, &Team), Changed<Team>>,
+    mut materials: ResMut<Assets<ShipMaterial>>
+) {
+    for (handle, team) in query.iter() {
+        let color = match team.0 {
+            1 => Color::rgb(0.8, 0.2, 0.2),
+            2 => Color::rgb(0.2, 0.2, 0.8),
+            _ => Color::rgb(0.2, 0.2, 0.2),
+        };
+        match materials.get_mut(handle) {
+            None => {},
+            Some(material) => { material.color = color; }
+        };
     }
 }

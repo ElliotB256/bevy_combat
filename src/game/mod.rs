@@ -44,7 +44,7 @@ impl Plugin for BaseGamePlugin {
         app.add_systems(Startup,startup
         );
         app.add_systems(Update, control_game_speed);
-
+        app.add_systems(Update, crate::materials::set_ship_shader_team_color);
     }
 }
 
