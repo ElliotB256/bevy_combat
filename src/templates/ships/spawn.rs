@@ -19,12 +19,12 @@ pub trait SpawnShipTemplate {
     type Resources<'a> : Resource;
 
     /// Spawns a new entity.
-    fn spawn<'a>(&self, commands: &mut Commands, input: &Res<Self::Resources<'a>>, materials: &mut ResMut<Assets<ShipMaterial>>) -> Entity;
+    fn spawn(&self, commands: &mut Commands, input: &Res<Self::Resources<'_>>, materials: &mut ResMut<Assets<ShipMaterial>>) -> Entity;
 }
 
-pub fn spawn_ships_and_despawn_spawn_commands<'a, T>(
+pub fn spawn_ships_and_despawn_spawn_commands<T>(
     mut commands: Commands,
-    resources: Res<T::Resources<'a>>,
+    resources: Res<T::Resources<'_>>,
     query: Query<(Entity, &T, &Transform, &Team)>,
     mut materials: ResMut<Assets<ShipMaterial>>
 ) where T : Component + Send + Sync + SpawnShipTemplate {
@@ -37,7 +37,7 @@ pub fn spawn_ships_and_despawn_spawn_commands<'a, T>(
         let created = spawn.spawn(&mut commands, &resources, &mut materials);
         commands
             .entity(created)
-            .insert(team.clone())
+            .insert(*team)
             .insert(transform)
             .insert(Into::<GlobalTransform>::into(transform));
         commands.entity(spawner_entity).despawn()

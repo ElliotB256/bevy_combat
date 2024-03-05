@@ -27,20 +27,6 @@ pub struct BaseGamePlugin;
 
 impl Plugin for BaseGamePlugin {
     fn build(&self, app: &mut App) {
-        // app.configure_sets(
-        //     FixedUpdate,
-        //     (
-        //         GameUpdateLogic,
-        //         FixedUpdateCommandFlush,
-        //         DespawnSet::Parallel,
-        //         DespawnSet::CommandFlush,
-        //     )
-        //         .chain(),
-        // );
-        // app.add_system(FixedUpdateCommandFlush, apply_deferred);
-        // app.add_system(DespawnSet::CommandFlush, apply_deferred);
-        // app.add_startup_system(startup);
-        // app.add_system(control_game_speed);
         app.add_systems(Startup,startup
         );
         app.add_systems(Update, control_game_speed);

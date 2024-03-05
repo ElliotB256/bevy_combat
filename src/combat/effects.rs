@@ -33,6 +33,7 @@ pub struct Effector {
     pub spawn_effect: Spawner,
 }
 
+/// Marker component that indicates an entity is an effect spawned by an [Effector].
 #[derive(Component)]
 pub struct Effect;
 

@@ -9,12 +9,9 @@ pub mod evasion;
 pub mod mortal;
 pub mod shields;
 pub mod tools;
+pub mod targets;
 
-#[derive(Clone, Copy, Component)]
-#[derive(Default)]
-pub struct Target(pub Option<Entity>);
-
-
+pub use targets::Target;
 
 /// The team an entity is assigned to.
 #[derive(Copy, Clone, PartialEq, Eq, Component)]
@@ -32,6 +29,7 @@ impl Plugin for CombatPlugin {
             FixedUpdate,
             (
                 tools::update_cooldowns,
+                targets::copy_targets_from_parents,
                 tools::fire_targetted_tools,
                 (
                     (effects::apply_effects, evasion::calculate_evasion_ratings),
