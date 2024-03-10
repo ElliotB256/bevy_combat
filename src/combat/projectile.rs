@@ -11,6 +11,12 @@ use super::{
 pub struct Projectile {
     pub reached_target: bool,
 }
+impl Default for Projectile {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Projectile {
     pub fn new() -> Self {
         Projectile {

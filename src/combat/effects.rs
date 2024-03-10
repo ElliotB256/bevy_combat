@@ -71,7 +71,7 @@ pub fn apply_effects(
         // was not instigated by anything, then it is a new root.
         let instigator: Instigator = match instigator_opt {
             None => Instigator(entity),
-            Some(source_instigator) => source_instigator.clone(),
+            Some(source_instigator) => *source_instigator,
         };
 
         while effect.number_to_apply > 0 {
