@@ -1,6 +1,6 @@
 //! Functionality for devices that can be used to create some effect - be it spawn a projectile, damage or heal a target, etc.
 
-use super::Target;
+use super::{effects::Effector, Target};
 use crate::game::GameTimeDelta;
 use bevy::prelude::*;
 
@@ -88,5 +88,16 @@ pub fn fire_targetted_tools(
                 cooldown.reset();
             }
         }
+    }
+}
+
+pub fn tools_activate_effectors(
+    mut query: Query<(&mut Effector, &mut TargettedTool)>
+) {
+    for (mut effector, mut tool) in query.iter_mut() {
+        if tool.firing {
+            effector.number_to_apply = 1;
+        }        
+        tool.firing = false;
     }
 }

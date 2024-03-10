@@ -1,5 +1,5 @@
 //! Movement and rotation of entities.
-use crate::game::GameTimeDelta;
+use crate::{game::GameTimeDelta, math_util};
 use bevy::prelude::*;
 
 #[derive(Default, Component)]
@@ -59,6 +59,21 @@ fn update_translation(dt: Res<GameTimeDelta>, mut query: Query<(&Velocity, &mut 
     }
 }
 
+pub fn set_heading_from_transform_on_heading_added(
+    mut query: Query<(&mut Heading, &Transform, Option<&GlobalTransform>), Added<Heading>>,
+) {
+    for (mut heading, transform, global_transform_opt) in query.iter_mut() {
+        let used_transform = 
+        if let Some(global_transform) = global_transform_opt {
+            global_transform.compute_transform()
+        } else {
+            *transform
+        };
+        // A heading of zero corresponds to facing along the local y direction.
+        heading.radians = math_util::get_heading_to_point(*used_transform.local_y());
+    }
+}
+
 pub fn update_rotation(mut query: Query<(&Heading, &mut Transform)>) {
     for (heading, mut trans) in query.iter_mut() {
         trans.rotation = Quat::from_rotation_z(heading.radians - std::f32::consts::FRAC_PI_2);
@@ -101,7 +116,8 @@ impl Plugin for MovementPlugin {
         app.add_systems(
             FixedUpdate,
             (
-                update_heading,
+                set_heading_from_transform_on_heading_added,
+                update_heading.after(set_heading_from_transform_on_heading_added),
                 calculate_max_speed,
                 calculate_speed.after(calculate_max_speed),
                 update_rotation.after(update_heading),

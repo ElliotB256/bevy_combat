@@ -7,7 +7,7 @@ use bevy::{
     sprite::Material2dPlugin,
 };
 
-use bevy_combat::{ai::AIPlugin, game::GameTimeDelta, materials::ShipMaterial};
+use bevy_combat::{ai::AIPlugin, game::GameTimeDelta, materials::ShipMaterial, templates::ships::frigates::RocketFrigateSpawner};
 use bevy_combat::{
     combat::Team,
     templates::ships::{
@@ -40,6 +40,8 @@ fn main() {
         bevy_combat::fx::beams::BeamEffectPlugin,
         Material2dPlugin::<ShipMaterial>::default(),
         bevy_combat::templates::ships::fighters::FighterTemplatePlugin,
+        bevy_combat::templates::ships::frigates::FrigateTemplatePlugin,
+        bevy_combat::templates::ships::rockets::RocketTemplatePlugin,
     ));
 
     app.add_systems(Startup, setup);
@@ -159,6 +161,22 @@ fn spawn_reinforcements(
                     team: reinforced_team,
                 });
             }
+        }
+        for _i in 0..rng.gen_range(0..=2) {
+            let pos: Vec2 = get_random_spawn_position_for_team(&reinforced_team);
+            let translation = (pos).extend(0.0);
+            let rotation = Quat::from_rotation_z(rng.gen::<f32>());
+            let scale = Vec3::splat(0.5);
+
+            commands.spawn(SpawnBundle {
+                spawn: RocketFrigateSpawner,
+                transform: Transform {
+                    translation,
+                    rotation,
+                    scale,
+                },
+                team: reinforced_team,
+            });
         }
     }
 }

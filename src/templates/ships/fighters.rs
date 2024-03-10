@@ -14,12 +14,7 @@ use crate::{
         movement::TurnToDestinationBehavior,
     },
     combat::{
-        damage::LastDamageTimer,
-        evasion::Evasion,
-        mortal::{Health, MaxHealth, Mortal},
-        shields::Shield,
-        targets::InheritTargetFromParent,
-        Target, Team,
+        damage::LastDamageTimer, evasion::Evasion, mortal::{Health, MaxHealth, Mortal}, projectile::CircularHitBox, shields::Shield, targets::InheritTargetFromParent, Target, Team
     },
     fx::{animated::AnimatedEffects, death::DeathEffect},
     materials::ShipMaterial,
@@ -104,9 +99,9 @@ impl SpawnShipTemplate for DroneSpawner {
                     armed: true,
                     firing: false,
                 },
-                crate::combat::effects::Effector {
-                    spawn_effect: crate::templates::weapons::small_pulse_laser_attack,
-                },
+                crate::combat::effects::Effector::new(
+                    crate::templates::weapons::small_pulse_laser_attack,
+                ),
             ))
             .insert(DeathEffect {
                 time_to_explosion: 0.1,
@@ -114,6 +109,7 @@ impl SpawnShipTemplate for DroneSpawner {
                 dying_explosion: AnimatedEffects::SmallExplosion,
                 death_explosion: AnimatedEffects::MediumExplosion,
             })
+            .insert(CircularHitBox { radius: 8.0 })
             .insert(Evasion::new(0.0))
             .id()
     }
@@ -148,34 +144,34 @@ impl SpawnShipTemplate for SmallShipSpawner {
                     armed: true,
                     firing: false,
                 },
-                crate::combat::effects::Effector {
-                    spawn_effect: crate::templates::weapons::pulse_laser_attack,
-                },
+                crate::combat::effects::Effector::new(
+                    crate::templates::weapons::pulse_laser_attack,
+                ),
             ))
             .id();
         let laser_gun_right = commands
-        .spawn((
-            Transform {
-                translation: Vec3::new(8.0, 0.0, 0.0),
-                rotation: Quat::IDENTITY,
-                scale: Vec3::splat(1.0),
-            },
-            GlobalTransform::default(),
-        ))
-        .insert((Target::default(), InheritTargetFromParent))
-        .insert((
-            crate::combat::tools::Cooldown::new(1.0),
-            crate::combat::tools::TargettedTool {
-                range: 100.0,
-                cone: 0.15,
-                armed: true,
-                firing: false,
-            },
-            crate::combat::effects::Effector {
-                spawn_effect: crate::templates::weapons::pulse_laser_attack,
-            },
-        ))
-        .id();
+            .spawn((
+                Transform {
+                    translation: Vec3::new(8.0, 0.0, 0.0),
+                    rotation: Quat::IDENTITY,
+                    scale: Vec3::splat(1.0),
+                },
+                GlobalTransform::default(),
+            ))
+            .insert((Target::default(), InheritTargetFromParent))
+            .insert((
+                crate::combat::tools::Cooldown::new(1.0),
+                crate::combat::tools::TargettedTool {
+                    range: 100.0,
+                    cone: 0.15,
+                    armed: true,
+                    firing: false,
+                },
+                crate::combat::effects::Effector::new(
+                    crate::templates::weapons::pulse_laser_attack,
+                ),
+            ))
+            .id();
 
         commands
             .spawn({
@@ -232,6 +228,7 @@ impl SpawnShipTemplate for SmallShipSpawner {
                 health: 100.0,
                 radius: 22.0,
             })
+            .insert(CircularHitBox { radius: 15.0 })
             .insert(Evasion::new(0.0))
             .push_children(&[laser_gun_left, laser_gun_right])
             .id()

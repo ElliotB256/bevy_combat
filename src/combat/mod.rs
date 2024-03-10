@@ -1,15 +1,15 @@
 use bevy::prelude::*;
 
-
-
 pub mod attack;
 pub mod damage;
 pub mod effects;
 pub mod evasion;
+pub mod lifetime;
 pub mod mortal;
+pub mod projectile;
 pub mod shields;
-pub mod tools;
 pub mod targets;
+pub mod tools;
 
 pub use targets::Target;
 
@@ -30,23 +30,38 @@ impl Plugin for CombatPlugin {
             (
                 tools::update_cooldowns,
                 targets::copy_targets_from_parents,
-                tools::fire_targetted_tools,
                 (
-                    (effects::apply_effects, evasion::calculate_evasion_ratings),
                     (
-                        evasion::determine_missed_attacks,
-                        shields::shield_absorb_damage,
-                        damage::apply_damage,
+                        (tools::fire_targetted_tools, tools::tools_activate_effectors).chain(),
+                        (
+                            projectile::initialise_projectiles,
+                            projectile::check_projectiles_reached_target,
+                            projectile::update_homing_projectile_position_target,
+                            projectile::projectiles_apply_effects,
+                        )
+                            .chain(),
+                    ),
+                    (
+                        (effects::apply_effects, evasion::calculate_evasion_ratings),
+                        (
+                            evasion::determine_missed_attacks,
+                            shields::shield_absorb_damage,
+                            damage::apply_damage,
+                        )
+                            .chain(),
                     )
                         .chain(),
+                    projectile::despawn_projectiles,
                 )
                     .chain(),
                 mortal::update_dieing,
                 mortal::check_for_dieing_entities,
-                effects::remove_old_effects,
+                lifetime::update_lifetimes,
+                // effects::remove_old_effects
             )
                 .in_set(CombatSystems),
         );
+        app.add_systems(FixedPostUpdate, effects::remove_old_effects);
         app.add_systems(
             PostUpdate,
             (apply_deferred, mortal::dispose_dieing, apply_deferred).chain(),

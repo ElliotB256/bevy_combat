@@ -40,3 +40,15 @@ pub fn small_pulse_laser_attack(commands: &mut Commands) -> Entity {
         ))
         .id()
 }
+
+pub fn small_rocket_attack(commands: &mut Commands) -> Entity {
+    commands
+        .spawn((
+            Attack::new(10.0),
+            Damage::new(15.0),
+            HitEffect {
+                effect: crate::fx::animated::AnimatedEffects::MediumExplosion,
+            },
+        ))
+        .id()
+}
