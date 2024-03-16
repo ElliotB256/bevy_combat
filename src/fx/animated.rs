@@ -18,6 +18,8 @@ struct AnimatedEffectPrefabs {
     tiny_plus_explosion: AnimatedEffectData,
     smoke1: AnimatedEffectData,
     shield: AnimatedEffectData,
+    flash_explosion: AnimatedEffectData,
+    big_flash_explosion: AnimatedEffectData
 }
 
 fn setup(
@@ -102,13 +104,35 @@ fn setup(
                 None,
                 None,
             )),
-            0.2,
+            0.1,
         ),
         shield: AnimatedEffectData::new(
             asset_server.load("art/shield2.png"),
             texture_atlases.add(TextureAtlasLayout::from_grid(
                 Vec2::new(64.0, 64.0),
                 4,
+                1,
+                None,
+                None,
+            )),
+            0.05,
+        ),
+        flash_explosion: AnimatedEffectData::new(
+            asset_server.load("art/flash_explosion_2.png"),
+            texture_atlases.add(TextureAtlasLayout::from_grid(
+                Vec2::new(16.0, 16.0),
+                6,
+                1,
+                None,
+                None,
+            )),
+            0.05,
+        ),
+        big_flash_explosion: AnimatedEffectData::new(
+            asset_server.load("art/big_flash_explosion.png"),
+            texture_atlases.add(TextureAtlasLayout::from_grid(
+                Vec2::new(64.0, 64.0),
+                10,
                 1,
                 None,
                 None,
@@ -162,6 +186,8 @@ pub enum AnimatedEffects {
     TinyPlusExplosion,
     Smoke1,
     Shield,
+    FlashExplosion,
+    BigFlashExplosion
 }
 
 struct AnimatedEffectData {
@@ -228,6 +254,8 @@ fn create_animated(
             AnimatedEffects::TinyPlusExplosion => &prefabs.tiny_plus_explosion,
             AnimatedEffects::Smoke1 => &prefabs.smoke1,
             AnimatedEffects::Shield => &prefabs.shield,
+            AnimatedEffects::FlashExplosion => &prefabs.flash_explosion,
+            AnimatedEffects::BigFlashExplosion => &prefabs.big_flash_explosion
         };
 
         // Spawn an effect

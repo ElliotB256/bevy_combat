@@ -92,8 +92,6 @@ pub fn apply_effects(
                     .entity(spawned)
                     .insert(EffectLocation(target_transform.translation()));
             }
-
-            println!("transform = {:?}", transform);
             effect.number_to_apply -= 1;
         }
     }

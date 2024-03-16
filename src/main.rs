@@ -5,9 +5,13 @@ use bevy::{
     diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
     prelude::*,
     sprite::Material2dPlugin,
+    winit::{UpdateMode, WinitSettings},
 };
 
-use bevy_combat::{ai::AIPlugin, game::GameTimeDelta, materials::ShipMaterial, templates::ships::frigates::RocketFrigateSpawner};
+use bevy_combat::{
+    ai::AIPlugin, game::GameTimeDelta, materials::ShipMaterial,
+    templates::ships::frigates::RocketFrigateSpawner,
+};
 use bevy_combat::{
     combat::Team,
     templates::ships::{
@@ -24,12 +28,26 @@ pub struct PrintTimer(Timer);
 fn main() {
     let mut app = App::new();
     app.insert_resource(AssetMetaCheck::Never);
-    app.add_plugins(DefaultPlugins.set(bevy::log::LogPlugin {
-        level: bevy::log::Level::INFO,
-        ..default()
-    }))
+    app.add_plugins(
+        DefaultPlugins
+            .set(bevy::log::LogPlugin {
+                level: bevy::log::Level::INFO,
+                ..default()
+            })
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: "Bevy Combat".into(),
+                    canvas: Some("#bevy".to_string()),
+                    // Tells wasm not to override default event handling, like F5, Ctrl+R etc.
+                    prevent_default_event_handling: false,
+                    resizable: true,
+                    ..default()
+                }),
+                ..default()
+            }),
+    )
     .add_plugins((LogDiagnosticsPlugin::default(), FrameTimeDiagnosticsPlugin));
-
+    app.add_plugins(bevy_wasm_window_resize::WindowResizePlugin);
     app.add_plugins((
         BaseGamePlugin,
         AIPlugin,
@@ -43,6 +61,11 @@ fn main() {
         bevy_combat::templates::ships::frigates::FrigateTemplatePlugin,
         bevy_combat::templates::ships::rockets::RocketTemplatePlugin,
     ));
+
+    app.insert_resource(WinitSettings {
+        focused_mode: UpdateMode::Continuous,
+        unfocused_mode: UpdateMode::Continuous,
+    });
 
     app.add_systems(Startup, setup);
     app.add_systems(Update, tick);
@@ -192,12 +215,21 @@ fn get_random_spawn_position_for_team(team: &Team) -> Vec2 {
     }
 }
 
-fn tick(time: Res<Time>, sprites: Query<&Sprite>, mut query: Query<&mut PrintTimer>) {
+fn tick(
+    time: Res<Time>,
+    entities: Query<Entity>,
+    sprites: Query<&Sprite>,
+    mut query: Query<&mut PrintTimer>,
+) {
     for mut timer in query.iter_mut() {
         timer.0.tick(time.delta());
 
         if timer.0.just_finished() {
-            println!("Sprites: {}", sprites.iter().count(),);
+            info!(
+                "Total Entities: {}\tSprites: {}",
+                entities.iter().count(),
+                sprites.iter().count(),
+            );
         }
     }
 }

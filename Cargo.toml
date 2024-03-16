@@ -16,6 +16,7 @@ rand = "0.8"
 bitflags = "2.4.2"
 multimap = "0.10"
 bevy = "0.13"
+bevy_wasm_window_resize = "0.3.0"
 
 [profile.release]
 codegen-units = 1

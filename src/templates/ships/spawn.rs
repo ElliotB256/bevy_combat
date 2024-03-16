@@ -55,7 +55,6 @@ pub fn spawn_ships_and_despawn_spawn_commands<T>(
             scale: Vec3::splat(0.5),
             ..default()
         };
-        println!("spawn: transform = {:?}", transform);
         let created = spawn.spawn(&mut commands, &resources, &mut materials);
         let mut entity_builder = commands.entity(created);
         entity_builder

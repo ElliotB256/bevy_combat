@@ -412,6 +412,7 @@ name = "bevy_combat"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "bevy_wasm_window_resize",
  "bitflags 2.4.2",
  "multimap",
  "rand",
@@ -1004,6 +1005,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.52",
+]
+
+[[package]]
+name = "bevy_wasm_window_resize"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "726e108a62263fd73dc655cd8deff66e996d4dbe7cbe58f45bee3783532b315b"
+dependencies = [
+ "bevy",
+ "web-sys",
 ]
 
 [[package]]

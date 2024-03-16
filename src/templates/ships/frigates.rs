@@ -138,8 +138,8 @@ impl SpawnShipTemplate for RocketFrigateSpawner {
             .insert(DeathEffect {
                 time_to_explosion: 0.1,
                 time_to_smoke: 0.05,
-                dying_explosion: AnimatedEffects::SmallExplosion,
-                death_explosion: AnimatedEffects::MediumExplosion,
+                dying_explosion: AnimatedEffects::MediumExplosion,
+                death_explosion: AnimatedEffects::BigFlashExplosion,
             })
             .insert(Shield {
                 health: 200.0,
